@@ -197,24 +197,75 @@ class Prato:
 ################FIM da Classe PRATOS####################################
 
 
+################Classe Pedidos####################################
 
-        #self.quantidade = None
-        #self.pagamento = None
-        #self.tamanho = None
-        #self.prato = None
-        #self.complemento = None
-        #self.observacao = None 
-        #self.valor = None
-        #self.troco = None
+class Pedido:
+    def __init__(self):
+        self.conexao = sqlite3.connect('bomapetite.db')
+        self.cursor = self.conexao.cursor()
+
+        self.criar_tabela()
+
+    def criar_tabela(self):
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS pedidos(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cliente_id INTEGER,
+                prato TEXT,
+                acompanhamento1 TEXT,
+                acompanhamento2 TEXT,
+                obervacao TEXT,
+                tamanho TEXT,
+                pagamento TEXT,
+                troco REAL,
+                taxa_entrega REAL,
+                valor_total REAL
+            )
+        ''')
+        self.conexao.commit()
+
+    def abrir_cadastrarPedido(self):
+        self.cadastrarPedido = tk.Toplevel()
+        self.cadastrarPedido.title('Cadastrar Pedido')
+        self.cadastrarPedido.geometry('500x600')
+
+        self.cursor.execute("SELECT id, nome FROM clientes")
+        clientes = self.cursor.fetchall()
+        nome_clientes = [f"{id} - {nome}" for id, nome in clientes]
+
+        tk.Label(self.cadastrarPedido, text="Nome:").grid(row=0, column=0)
+        self.combo_cliente = ttk.Combobox(self.cadastrarPedido, values=nome_clientes)
+        self.combo_cliente.grid(row=0, column=1)
+        self.combo_cliente.bind("<<ComboboxSelected>>", self.preencher_dados_cliente)
+
+        self.endereco = tk.Entry(self.cadastrarPedido)
+        self.endereco.grid(row=1, column=0)
+        tk.Label(self.cadastrarPedido, text="Endereco:").grid(row=1,column=1)
+
+        self.telefone = tk.Entry(self.cadastrarPedido)
+        self.telefone.grid(row=2, column= 0)
+        tk.Label(self.cadastrarPedido, text="Telefone:").grid(row=2,column=1)
+
+        self.referencia = tk.Entry(self.cadastrarPedido)
+        self.referencia.grid(row=3,column=0)
+        tk.Label(self.cadastrarPedido, text="Referencia:").grid(row=3, column=1)
+        
+
+########FIM da Classe Pedidos####################################
+     
+            
+#self.pagamento = None
+#self.valor = None
+#self.troco = None
 
 
-        #Próximos passos que você pode implementar:
-        #Botão de excluir cliente selecionado
+#Próximos passos que você pode implementar:
+#Botão de excluir cliente selecionado
 
-        #Edição de cliente (clicar numa linha e abrir para editar)
+#Edição de cliente (clicar numa linha e abrir para editar)
 
-        #Buscar clientes por nome ou telefone
+#Buscar clientes por nome ou telefone
 
-        #Separar a classe de banco em outro arquivo (DAO)
+#Separar a classe de banco em outro arquivo (DAO)
 
-        #Criar a tabela de pedidos com relação ao cliente
+#Criar a tabela de pedidos com relação ao cliente
