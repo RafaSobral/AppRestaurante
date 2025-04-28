@@ -25,7 +25,7 @@ class Cliente:
                 endereco TEXT NOT NULL,
                 telefone TEXT NOT NULL,
                 referencia TEXT NOT NULL
-                            )
+            )
         ''')
         self.conexao.commit()
 
@@ -196,6 +196,77 @@ class Prato:
 
 ################FIM da Classe PRATOS####################################
 
+################Classe Acompanhamentos####################################
+
+class Acompanhamento:
+    def __init__(self):
+        self.conexao = sqlite3.connect('bomapetite.db')
+        self.cursor = self.conexao.cursor()
+        self.criar_tabela()
+
+        self.acomp = None
+        self.cadastrarAcomp = None
+
+    def criar_tabela(self):
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS acompanhamentos(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL        
+            )
+        ''')
+        self.conexao.commit()
+
+    def salvar_Acompanhamento(self):
+        nome = self.acomp.get()
+
+        if nome == "":
+            messagebox.showerror("Erro", "O campo esta vazio")
+            return
+        
+        self.cursor.execute('''
+            INSERT INTO acompanhamentos (nome)
+            VALUES (?)
+        ''',(nome,))
+        self.conexao.commit()
+
+        messagebox.showinfo("Sucesso", "Acompanhamento Cadastrado!")
+        self.cadastrarAcomp.destroy()
+            
+
+    def abrir_cadastrarAcompanhamentos(self):
+        self.cadastrarAcomp = tk.Toplevel()
+        self.cadastrarAcomp.title("Cadastrar Acompanhamentos:")
+        self.cadastrarAcomp.geometry("500x600")
+
+        tk.Label(self.cadastrarAcomp, text="Acompanhamento: " ).grid(row=0, column=0)
+        self.acomp = tk.Entry(self.cadastrarAcomp)
+        self.acomp.grid(row=0, column=1)
+
+        botao_Salvar = tk.Button(self.cadastrarAcomp, text="Salvar", command=self.salvar_Acompanhamento)
+        botao_Salvar.grid(row=1, column=1)
+
+    def abrir_visualizarAcompanhamentos(self):
+        self.visualizarAcomp = tk.Toplevel()
+        self.visualizarAcomp.title("Visualizar Acompanhamentos:")
+        self.visualizarAcomp.geometry("500x600")
+
+        tree = ttk.Treeview(self.visualizarAcomp, columns=("id","nome"), show="headings")
+        tree.heading("id", text="ID")
+        tree.heading("nome", text="Nome")
+
+        tree.column("id", width=30)
+        tree.column("nome", width=100)
+
+        tree.pack(expand=True, fill="both")
+
+        self.cursor.execute("SELECT * FROM acompanhamentos")
+        dados = self.cursor.fetchall()
+
+        for acompanhamento in dados:
+            tree.insert("", "end", values=acompanhamento)
+
+
+################FIM da Classe Acompanhamentos####################################
 
 ################Classe Pedidos####################################
 
@@ -271,7 +342,6 @@ class Pedido:
         self.combo_prato = ttk.Combobox(self.cadastrarPedido, values=pratos)
         self.combo_prato.grid(row=4,column=1)
 
-        #Cadastro de acompanhamentos ainda nao foi criado 
         self.cursor.execute("SELECT nome FROM acompanhamentos")
         acompanhamentos1 = [a[0] for a in self.cursor.fetchall()]
         tk.Label(self.cadastrarPedido, text="Acompanhamento 1:").grid(row=5,column=0)
@@ -369,19 +439,4 @@ class Pedido:
 
 ########FIM da Classe Pedidos####################################
 
-#Próximos passos que você pode implementar:
-
-#Botão de excluir cliente selecionado
-
-#Edição de cliente (clicar numa linha e abrir para editar)
-
-#Buscar clientes por nome ou telefone
-
-#Separar a classe de banco em outro arquivo (DAO)
-
-#Criar a tabela de pedidos com relação ao cliente
-
-#Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
-
-#Declarar as variaveis no metodo construtor 
 
