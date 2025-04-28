@@ -204,6 +204,21 @@ class Pedido:
         self.conexao = sqlite3.connect('bomapetite.db')
         self.cursor = self.conexao.cursor()
 
+        self.cadastrarPedido = None
+        self.combo_cliente = None
+        self.telefone = None
+        self.endereco =  None
+        self.referencia = None
+        self.combo_prato = None
+        self.acomp1 = None
+        self.acomp2 = None
+        self.observacao = None
+        self.tamanho = None
+        self.pagamento = None
+        self.troco = None
+        self.taxa = None
+        self.total = None
+
         self.criar_tabela()
 
     def criar_tabela(self):
@@ -227,7 +242,7 @@ class Pedido:
     def abrir_cadastrarPedido(self):
         self.cadastrarPedido = tk.Toplevel()
         self.cadastrarPedido.title('Cadastrar Pedido')
-        self.cadastrarPedido.geometry('500x600')
+        self.cadastrarPedido.geometry('1000x1000')
 
         self.cursor.execute("SELECT id, nome FROM clientes")
         clientes = self.cursor.fetchall()
@@ -252,7 +267,7 @@ class Pedido:
 
         self.cursor.execute("SELECT nome FROM pratos")
         pratos = [p[0] for p in self.cursor.fetchall()]
-        tk.Label(self.cadastrarPedido, text="Prato:").grid(row=4,column=1)
+        tk.Label(self.cadastrarPedido, text="Prato:").grid(row=4,column=0)
         self.combo_prato = ttk.Combobox(self.cadastrarPedido, values=pratos)
         self.combo_prato.grid(row=4,column=1)
 
@@ -279,7 +294,7 @@ class Pedido:
             tk.Radiobutton(self.cadastrarPedido, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).grid(row=8, column=i+1)
 
         tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0)
-        self.pagamento = tk.Stringvar()
+        self.pagamento = tk.StringVar()
         pagamentos = [("Credito"),("Debito"),("Dinheiro"),("Pix"),("Mumbuca")]
         for i, op in enumerate(pagamentos):
             tk.Radiobutton(self.cadastrarPedido, text=op, variable=self.pagamento, value=op).grid(row=9, column=1)
@@ -294,10 +309,54 @@ class Pedido:
         self.taxa.bind("<KeyRealease>", lambda e: self.calcular_valor())
 
         tk.Label(self.cadastrarPedido, text="Valor Total:").grid(row=12, column=0)
-        self.total= tk.StringVar()
-        tk.Entry(self.cadastrarPedido, textVariable=self.valor, state="readonly").grid(row=12, column=1)
+        self.total = tk.StringVar()
+        tk.Entry(self.cadastrarPedido, textVariable=self.total, state="readonly").grid(row=12, column=1)
 
         tk.Button(self.cadastrarPedido, text="Salvar Pedido", command=self.salvar_Pedido).grid(row=13, column=0)
+
+    def preencher_dados_cliente(self, event):
+        cliente_id = self.combo_cliente.get().split(" - ")[0]
+        self.cursor.execute("SELECT endereco, telefone, referencia FROM clientes WHERE id = ?", (cliente_id,))
+        dados = self.cursor.fetchone()
+        if dados:
+            self.endereco.delete(0, tk.END)
+            self.telefone.delete(0, tk.END)
+            self.referencia.delete(0, tk.END)
+            self.endereco.insert(0, dados[0])
+            self.telefone.insert(0, dados[1])
+            self.referencia.insert(0, dados[2])
+
+    def calcular_valor(self):
+        try:
+            valor_marmita = float(self.tamanho.get())
+            taxa = float(self.taxa.get()) if self.taxa.get() else 0
+            total  = valor_marmita + taxa
+            self.total.set(f"{total:.2f}")
+        except:
+            self.total.set("")
+
+    def salvar_Pedido(self):
+        cliente_id = self.combo_cliente.get().split(" - ")[0]
+        dados = (
+            cliente_id,
+            self.combo_prato.get(),
+            self.acomp1.get(),
+            self.acomp2.get(),
+            self.observacao.get(),
+            self.tamanho.get(),
+            self.pagamento.get(),
+            float(self.troco.get() or 0),
+            float(self.taxa.get() or 0),
+            float(self.total.get() or 0)
+        )
+
+        self.cursor.execute('''
+            INSERT INTO pedidos (cliente_id, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
+        ''', dados)
+        self.conexao.commit()
+        messagebox.showinfo("Sucesso", "Pedido salvo!!!")
+        self.cadastrarPedido.destroy()
 
 
 
@@ -309,14 +368,9 @@ class Pedido:
         
 
 ########FIM da Classe Pedidos####################################
-     
-            
-#self.pagamento = None
-#self.valor = None
-#self.troco = None
-
 
 #Próximos passos que você pode implementar:
+
 #Botão de excluir cliente selecionado
 
 #Edição de cliente (clicar numa linha e abrir para editar)
@@ -328,4 +382,6 @@ class Pedido:
 #Criar a tabela de pedidos com relação ao cliente
 
 #Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
+
+#Declarar as variaveis no metodo construtor 
 
