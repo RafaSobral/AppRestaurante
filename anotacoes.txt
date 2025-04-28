@@ -1,0 +1,19 @@
+#Próximos passos para implementar:
+
+#Botão de excluir cliente selecionado
+
+#Edição de cliente (clicar numa linha e abrir para editar)
+
+#Buscar clientes por nome ou telefone
+
+#Separar a classe de banco em outro arquivo (DAO)
+
+#Criar a tabela de pedidos com relação ao cliente
+
+#Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
+
+#Declarar as variaveis no metodo construtor 
+
+#Cadastro/Tabela de acompanhamentos ainda nao foi criado 
+
+#Pesquisar como organizar melhor o codigo 
