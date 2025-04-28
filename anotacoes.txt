@@ -8,18 +8,14 @@
 
 #Separar a classe de banco em outro arquivo (DAO)
 
-#Criar a tabela de pedidos com relação ao cliente
-
 #Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
 
-#Declarar as variaveis no metodo construtor 
-
 #Funcao para salvar todos os dados do dia, marmitas vendidas, valores e etc e salvar em uma tabela para acompanhar como foi o mes 
-
-#Cadastro/Tabela de acompanhamentos ainda nao foi criado 
 
 #Pesquisar como organizar melhor o codigo 
 
 #Estudar algumas linhas de codigo da classe pedido que nao entendi completamente
 
 #Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
+
+#Resolver bugs da classe Pedido
