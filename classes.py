@@ -239,16 +239,73 @@ class Pedido:
         self.combo_cliente.bind("<<ComboboxSelected>>", self.preencher_dados_cliente)
 
         self.endereco = tk.Entry(self.cadastrarPedido)
-        self.endereco.grid(row=1, column=0)
-        tk.Label(self.cadastrarPedido, text="Endereco:").grid(row=1,column=1)
+        self.endereco.grid(row=1, column=1)
+        tk.Label(self.cadastrarPedido, text="Endereco:").grid(row=1,column=0)
 
         self.telefone = tk.Entry(self.cadastrarPedido)
-        self.telefone.grid(row=2, column= 0)
-        tk.Label(self.cadastrarPedido, text="Telefone:").grid(row=2,column=1)
+        self.telefone.grid(row=2, column= 1)
+        tk.Label(self.cadastrarPedido, text="Telefone:").grid(row=2,column=0)
 
         self.referencia = tk.Entry(self.cadastrarPedido)
-        self.referencia.grid(row=3,column=0)
-        tk.Label(self.cadastrarPedido, text="Referencia:").grid(row=3, column=1)
+        self.referencia.grid(row=3,column=1)
+        tk.Label(self.cadastrarPedido, text="Referencia:").grid(row=3, column=0)
+
+        self.cursor.execute("SELECT nome FROM pratos")
+        pratos = [p[0] for p in self.cursor.fetchall()]
+        tk.Label(self.cadastrarPedido, text="Prato:").grid(row=4,column=1)
+        self.combo_prato = ttk.Combobox(self.cadastrarPedido, values=pratos)
+        self.combo_prato.grid(row=4,column=1)
+
+        #Cadastro de acompanhamentos ainda nao foi criado 
+        self.cursor.execute("SELECT nome FROM acompanhamentos")
+        acompanhamentos1 = [a[0] for a in self.cursor.fetchall()]
+        tk.Label(self.cadastrarPedido, text="Acompanhamento 1:").grid(row=5,column=0)
+        self.acomp1 = ttk.Combobox(self.cadastrarPedido, values=acompanhamentos1)
+        self.acomp1.grid(row=5, column=1)
+
+        acompanhamentos2 = [a[0] for a in self.cursor.fetchall()]
+        tk.Label(self.cadastrarPedido, text="Acompanhamentos 2:").grid(row=6,column=0)
+        self.acomp2 = ttk.Combobox(self.cadastrarPedido, values=acompanhamentos2)
+        self.acomp2.grid(row=6, column=1)
+
+        tk.Label(self.cadastrarPedido, text="Observacao:").grid(row=7, column=0)
+        self.observacao = tk.Entry(self.cadastrarPedido)
+        self.observacao.grid(row=7,column=1)
+
+        tk.Label(self.cadastrarPedido, text="Tamanho:").grid(row=8, column=0)
+        self.tamanho = tk.StringVar()
+        tamanhos =[("P","13"),("M","15"),("G","18")]
+        for i, (txt, val) in enumerate(tamanhos):
+            tk.Radiobutton(self.cadastrarPedido, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).grid(row=8, column=i+1)
+
+        tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0)
+        self.pagamento = tk.Stringvar()
+        pagamentos = [("Credito"),("Debito"),("Dinheiro"),("Pix"),("Mumbuca")]
+        for i, op in enumerate(pagamentos):
+            tk.Radiobutton(self.cadastrarPedido, text=op, variable=self.pagamento, value=op).grid(row=9, column=1)
+
+        tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=10, column=0)
+        self.troco = tk.Entry(self.cadastrarPedido)
+        self.troco.grid(row=10, column=1)
+
+        tk.Label(self.cadastrarPedido, text="Taxa de entrega:").grid(row=11, column=0)
+        self.taxa = tk.Entry(self.cadastrarPedido)
+        self.taxa.grid(row=11, column=1)
+        self.taxa.bind("<KeyRealease>", lambda e: self.calcular_valor())
+
+        tk.Label(self.cadastrarPedido, text="Valor Total:").grid(row=12, column=0)
+        self.total= tk.StringVar()
+        tk.Entry(self.cadastrarPedido, textVariable=self.valor, state="readonly").grid(row=12, column=1)
+
+        tk.Button(self.cadastrarPedido, text="Salvar Pedido", command=self.salvar_Pedido).grid(row=13, column=0)
+
+
+
+
+
+
+
+
         
 
 ########FIM da Classe Pedidos####################################
@@ -269,3 +326,6 @@ class Pedido:
 #Separar a classe de banco em outro arquivo (DAO)
 
 #Criar a tabela de pedidos com relação ao cliente
+
+#Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
+
