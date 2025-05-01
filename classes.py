@@ -366,9 +366,9 @@ class Pedido:
 
         tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0)
         self.pagamento = tk.StringVar()
-        pagamentos = [("Credito"),("Debito"),("Dinheiro"),("Pix"),("Mumbuca")]
+        pagamentos =["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
         for i, op in enumerate(pagamentos):
-            tk.Radiobutton(self.cadastrarPedido, text=op, variable=self.pagamento, value=op).grid(row=9, column=1)
+            tk.Radiobutton(self.cadastrarPedido, text=op, variable=self.pagamento, value=op).grid(row=9, column=1 + i)
 
         tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=10, column=0)
         self.troco = tk.Entry(self.cadastrarPedido)
