@@ -300,12 +300,12 @@ class Pedido:
                 prato TEXT,
                 acompanhamento1 TEXT,
                 acompanhamento2 TEXT,
-                obervacao TEXT,
+                observacao TEXT,
                 tamanho TEXT,
                 pagamento TEXT,
                 troco REAL,
-                taxa_entrega REAL,
-                valor_total REAL
+                taxa REAL,
+                total REAL
             )
         ''')
         self.conexao.commit()
@@ -348,6 +348,7 @@ class Pedido:
         self.acomp1 = ttk.Combobox(self.cadastrarPedido, values=acompanhamentos1)
         self.acomp1.grid(row=5, column=1)
 
+        self.cursor.execute("SELECT nome FROM acompanhamentos")
         acompanhamentos2 = [a[0] for a in self.cursor.fetchall()]
         tk.Label(self.cadastrarPedido, text="Acompanhamentos 2:").grid(row=6,column=0)
         self.acomp2 = ttk.Combobox(self.cadastrarPedido, values=acompanhamentos2)
@@ -376,11 +377,11 @@ class Pedido:
         tk.Label(self.cadastrarPedido, text="Taxa de entrega:").grid(row=11, column=0)
         self.taxa = tk.Entry(self.cadastrarPedido)
         self.taxa.grid(row=11, column=1)
-        self.taxa.bind("<KeyRealease>", lambda e: self.calcular_valor())
+        self.taxa.bind("<KeyRelease>", lambda e: self.calcular_valor())
 
         tk.Label(self.cadastrarPedido, text="Valor Total:").grid(row=12, column=0)
         self.total = tk.StringVar()
-        tk.Entry(self.cadastrarPedido, textVariable=self.total, state="readonly").grid(row=12, column=1)
+        tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=12, column=1)
 
         tk.Button(self.cadastrarPedido, text="Salvar Pedido", command=self.salvar_Pedido).grid(row=13, column=0)
 
