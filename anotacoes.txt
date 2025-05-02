@@ -4,6 +4,8 @@
 
 #Buscar clientes por nome ou telefone
 
+#consertar radiobutton's da janela de cadastrar pedido
+
 #Separar a classe de banco em outro arquivo (DAO)
 
 #Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
@@ -13,4 +15,6 @@
 #Estudar algumas linhas de codigo da classe pedido que nao entendi completamente
 
 #Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
+
+#mudar nomeclatura de algumas funcoes e comentar o codigo
 

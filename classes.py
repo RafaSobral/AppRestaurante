@@ -15,6 +15,7 @@ class Cliente:
         self.endereco = None
         self.telefone = None
         self.referencia = None
+        self.gerenciarClientes = None
 
 
 
@@ -107,6 +108,99 @@ class Cliente:
 
         botao_voltar = tk.Button(self.cadastrarCliente, text="Fechar", command=self.cadastrarCliente.destroy)
         botao_voltar.grid(row = 7, column = 0)
+
+    def abrir_gerenciarClientes(self):
+        self.gerenciarClientes = tk.Toplevel()
+        self.gerenciarClientes.title("Gerenciar Clientes")
+        self.gerenciarClientes.geometry('300x500')
+
+        self.tree = ttk.Treeview(self.gerenciarClientes, columns=("id","nome","endereco","telefone","referencia"), show="headings")
+        self.tree.heading("id",text="ID")
+        self.tree.heading("nome",text="Nome")
+        self.tree.heading("endereco",text="Endereco")
+        self.tree.heading("telefone",text="Telefone")
+        self.tree.heading("referencia",text="Referencia")
+
+        self.tree.column("id", width=30)
+        self.tree.column("nome", width=30)
+        self.tree.column("endereco", width=30)
+        self.tree.column("telefone", width=30)
+        self.tree.column("referencia", width=30)
+
+        self.tree.pack(fill="both",expand=True,padx=10,pady=10)
+
+        self.cursor.execute("SELECT * FROM clientes")
+        for row in self.cursor.fetchall():
+            self.tree.insert("", "end", values=row)
+
+        botao_editar = tk.Button(self.gerenciarClientes, text="Editar", command=self.editar_cliente)
+        botao_editar.pack(side="left", padx=10, pady=10)
+
+        botao_deletar = tk.Button(self.gerenciarClientes, text="Deletar", command=self.deletar_cliente)
+        botao_deletar.pack(side="left", padx=10, pady=10)
+
+    def editar_cliente(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione um cliente para editar")
+            return
+        
+        cliente_id, nome_antigo, endereco_antigo, telefone_antigo, referencia_antiga = self.tree.item(selected[0], "values")
+
+        janela_editar = tk.Toplevel()
+        janela_editar.title("Editar Cliente")
+
+        tk.Label(janela_editar, text="Nome").pack()
+        nome_entry = tk.Entry(janela_editar)
+        nome_entry.insert(0, nome_antigo)
+        nome_entry.pack()
+
+        tk.Label(janela_editar, text="Endereco").pack()
+        endereco_entry = tk.Entry(janela_editar)
+        endereco_entry.insert(0, endereco_antigo)
+        endereco_entry.pack()
+
+        tk.Label(janela_editar, text="Telefone").pack()
+        telefone_entry = tk.Entry(janela_editar)
+        telefone_entry.insert(0, telefone_antigo)
+        telefone_entry.pack()
+
+        tk.Label(janela_editar, text="Referencia").pack()
+        referencia_entry = tk.Entry(janela_editar)
+        referencia_entry.insert(0, referencia_antiga)
+        referencia_entry.pack()
+
+        def salvar_edicao():
+            novo_nome = nome_entry.get()
+            novo_endereco = endereco_entry.get()
+            novo_telefone = telefone_entry.get()
+            nova_referencia = referencia_entry.get()
+            self.cursor.execute("UPDATE clientes SET nome=?, endereco=?, telefone=?, referencia=? WHERE ID=?",(novo_nome, novo_endereco, novo_telefone, nova_referencia, cliente_id))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Cliente atualizado com sucesso")
+            janela_editar.destroy()
+            self.gerenciarClientes.destroy()
+            self.abrir_gerenciarClientes()
+
+        tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+
+
+    def deletar_cliente(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showinfo("Aviso","Selecione um cliente para deletar")
+            return
+        
+        cliente_id = self.tree.item(selected[0], "values")[0]
+
+        confirm = messagebox.askyesno("Confirmar", "Tem certeza que deseja deletar esse cliente?")
+        if confirm:
+            self.cursor.execute("DELETE FROM clientes WHERE id=?", (cliente_id,))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Cliente deletado com Sucesso")
+            self.tree.delete(selected[0])
+
+        
 
 
 
@@ -344,6 +438,9 @@ class Acompanhamento:
         for acompanhamento in dados:
             tree.insert("", "end", values=acompanhamento)
 
+    def abrir_gerenciarAcompanhamentos(self):
+        pass
+
 
 ################FIM da Classe Acompanhamentos####################################
 
@@ -549,6 +646,9 @@ class Pedido:
 
         for pedidos in dados:
             tree.insert("", "end", values=pedidos)
+
+    def abrir_gerenciarPedidos(self):
+        pass
 
 
 ########FIM da Classe Pedidos####################################
