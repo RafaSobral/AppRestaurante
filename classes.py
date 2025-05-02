@@ -474,7 +474,7 @@ class Acompanhamento:
         janela_editar = tk.Toplevel()
         janela_editar.title('Editar prato')
 
-        tk.Label(janela_editar, text="Nome").pack
+        tk.Label(janela_editar, text="Nome").pack()
         nome_entry = tk.Entry(janela_editar)
         nome_entry.insert(0, nome_antigo)
         nome_entry.pack()
@@ -712,7 +712,141 @@ class Pedido:
             tree.insert("", "end", values=pedidos)
 
     def abrir_gerenciarPedidos(self):
-        pass
+        self.gerenciarPedidos = tk.Toplevel()
+        self.gerenciarPedidos.title("Gerenciar Pedidos")
+        self.gerenciarPedidos.geometry('300x500')
+        
+        self.tree = ttk.Treeview(self.gerenciarPedidos, columns=("cliente_id","prato","acomp1","acomp2","observacao","tamanho","pagamento","troco","taxa","total","data_hoje"), show="headings")
+        self.tree.heading("cliente_id", text="ID")
+        self.tree.heading("prato", text="Prato")
+        self.tree.heading("acomp1", text="Acomp1")
+        self.tree.heading("acomp2", text="Acomp2")
+        self.tree.heading("observacao", text="Observacao")
+        self.tree.heading("tamanho", text="Tamanho")
+        self.tree.heading("pagamento", text="Pagamento")
+        self.tree.heading("troco", text="Troco")
+        self.tree.heading("taxa", text="Taxa")
+        self.tree.heading("total", text="Total")
+        self.tree.heading("data_hoje", text="Data")
+
+        self.tree.column("cliente_id", width=30)
+        self.tree.column("prato", width=30)
+        self.tree.column("acomp1", width=30)
+        self.tree.column("acomp2", width=30)
+        self.tree.column("observacao", width=30)
+        self.tree.column("tamanho", width=30)
+        self.tree.column("pagamento", width=30)
+        self.tree.column("troco", width=30)
+        self.tree.column("taxa", width=30)
+        self.tree.column("total", width=30)
+        self.tree.column("data_hoje", width=30)
+
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.cursor.execute("SELECT id, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
+
+
+        for row in self.cursor.fetchall():
+            self.tree.insert("", "end", values=row)
+
+        botao_editar = tk.Button(self.gerenciarPedidos, text="Editar", command=self.editar_pedido)
+        botao_editar.pack(side="left", padx=10, pady=10)
+
+        botao_deletar = tk.Button(self.gerenciarPedidos, text="Deletar", command=self.deletar_pedido)
+        botao_deletar.pack(side="right", padx=10, pady=10)
+
+    def editar_pedido(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione um pedido para editar")
+            return
+        
+
+        cliente_id, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, data_hoje = self.tree.item(selected[0], "values")
+
+        janela_editar = tk.Toplevel()
+        janela_editar.title('Editar Pedido')
+
+        tk.Label(janela_editar, text="Prato").pack()
+        prato_entry = tk.Entry(janela_editar)
+        prato_entry.insert(0, prato_antigo)
+        prato_entry.pack()
+
+        tk.Label(janela_editar, text="Acomp1").pack()
+        acomp1_entry = tk.Entry(janela_editar)
+        acomp1_entry.insert(0, acomp1_antigo)
+        acomp1_entry.pack()
+
+        tk.Label(janela_editar, text="Acomp2").pack()
+        acomp2_entry = tk.Entry(janela_editar)
+        acomp2_entry.insert(0, acomp2_antigo)
+        acomp2_entry.pack()
+
+        tk.Label(janela_editar, text="Observacao").pack()
+        observacao_entry = tk.Entry(janela_editar)
+        observacao_entry.insert(0,observacao_antiga)
+        observacao_entry.pack()
+
+        tk.Label(janela_editar, text="Tamanho").pack()
+        tamanho_entry = tk.Entry(janela_editar)
+        tamanho_entry.insert(0,tamanho_antigo)
+        tamanho_entry.pack()
+
+        tk.Label(janela_editar, text="Pagamento").pack()
+        pagamento_entry = tk.Entry(janela_editar)
+        pagamento_entry.insert(0,pagamento_antigo)
+        pagamento_entry.pack()
+
+        tk.Label(janela_editar, text="Troco").pack()
+        troco_entry = tk.Entry(janela_editar)
+        troco_entry.insert(0,troco_antigo)
+        troco_entry.pack()
+
+        tk.Label(janela_editar, text="Taxa").pack()
+        taxa_entry = tk.Entry(janela_editar)
+        taxa_entry.insert(0,taxa_antiga)
+        taxa_entry.pack()
+
+        tk.Label(janela_editar, text="Total").pack()
+        total_entry = tk.Entry(janela_editar)
+        total_entry.insert(0,total_antigo)
+        total_entry.pack()
+
+        def salvar_edicao():
+            novo_prato = prato_entry.get()
+            novo_acomp1 = acomp1_entry.get()
+            novo_acomp2 = acomp2_entry.get()
+            nova_observacao = observacao_entry.get()
+            novo_tamanho = tamanho_entry.get()
+            novo_pagamento = pagamento_entry.get()
+            novo_troco = troco_entry.get()
+            nova_taxa = taxa_entry.get()
+            novo_total = total_entry.get()
+
+            self.cursor.execute("UPDATE pedidos SET prato=?, acomp1=?, acomp2=?, observacao=?, tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE cliente_id=?", (novo_prato, novo_acomp1, novo_acomp2, nova_observacao, novo_tamanho, novo_pagamento, novo_troco, nova_taxa, novo_total, cliente_id))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Pedido atualizado com sucesso")
+            janela_editar.destroy()
+            self.gerenciarPedidos.destroy()
+            self.abrir_gerenciarPedidos()
+
+        tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+
+    def deletar_pedido(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione um pedido para deletar")
+            return
+
+        pedido_id = self.tree.item(selected[0],"values")[0]
+
+        confirm = messagebox.askyesno("Confirmar","Tem certeza que deseja excluir esse Pedido?")
+        if confirm:
+            self.cursor.execute("DELETE FROM pedidos WHERE cliente_id=?", (pedido_id,))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Pedido deletado com sucesso")        
+            self.tree.delete(selected[0])
+
 
 
 ########FIM da Classe Pedidos####################################
