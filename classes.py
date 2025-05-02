@@ -439,7 +439,71 @@ class Acompanhamento:
             tree.insert("", "end", values=acompanhamento)
 
     def abrir_gerenciarAcompanhamentos(self):
-        pass
+        self.gerenciarAcomp = tk.Toplevel()
+        self.gerenciarAcomp.title('Gerenciar Acompanhamentos')
+        self.gerenciarAcomp.geometry('300x500')
+
+        self.tree = ttk.Treeview(self.gerenciarAcomp, columns=("id","nome"), show="headings")
+        self.tree.heading("id", text="ID")
+        self.tree.heading("nome", text="Nome")
+
+        self.tree.column("id", width=30)
+        self.tree.column("nome", width=30)
+
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.cursor.execute("SELECT * FROM acompanhamentos")
+
+        for row in self.cursor.fetchall():
+            self.tree.insert("", "end", values=row)
+
+        botao_editar = tk.Button(self.gerenciarAcomp, text="Editar", command=self.editar_acompanhamento)
+        botao_editar.pack(side="left", padx=10, pady=10)
+
+        botao_deletar = tk.Button(self.gerenciarAcomp, text="Deletar", command=self.deletar_acompanhamento)
+        botao_deletar.pack(side="right", padx=10, pady=10)
+
+    def editar_acompanhamento(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione um acompanhamento para deletar")
+            return
+        
+        acomp_id, nome_antigo = self.tree.item(selected[0], "values")
+
+        janela_editar = tk.Toplevel()
+        janela_editar.title('Editar prato')
+
+        tk.Label(janela_editar, text="Nome").pack
+        nome_entry = tk.Entry(janela_editar)
+        nome_entry.insert(0, nome_antigo)
+        nome_entry.pack()
+
+        def salvar_edicao():
+            novo_nome = nome_entry.get()
+            self.cursor.execute("UPDATE acompanhamentos SET nome=? WHERE id=?", (novo_nome, acomp_id))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Acompanhamento atualizado com sucesso")
+            janela_editar.destroy()
+            self.gerenciarAcomp.destroy()
+            self.abrir_gerenciarAcompanhamentos()
+
+        tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+
+    def deletar_acompanhamento(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione um acompanhamento para deletar")
+            return
+
+        acomp_id = self.tree.item(selected[0],"values")[0]
+
+        confirm = messagebox.askyesno("Confirmar","Tem certeza que deseja excluir essa acompanhamento?")
+        if confirm:
+            self.cursor.execute("DELETE FROM acompanhamentos WHERE id=?", (acomp_id,))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Acompanhamento deletado com sucesso")
+            self.tree.delete(selected[0])
 
 
 ################FIM da Classe Acompanhamentos####################################
