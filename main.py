@@ -1,15 +1,16 @@
 import tkinter as tk
-from classes import Cliente, Prato, Pedido, Acompanhamento
+from classes import Cliente, Prato, Pedido, Acompanhamento, Caixa
 
 
 janela = tk.Tk()
 janela.title("Bom Apetite")
-janela.geometry("700x500")
+janela.geometry("170x220")
 
 app_Cliente = Cliente() 
 app_Prato = Prato()
 app_Pedido = Pedido()
 app_Acompanhamentos = Acompanhamento()
+app_Caixa = Caixa()
 
 botao_cadastrar = tk.Button(janela, text="Cadastrar Cliente", command = app_Cliente.abrir_cadastrarCliente)
 botao_cadastrar.grid(row = 0, column= 0)
@@ -32,5 +33,10 @@ botao_visualizarAcompanhamentos.grid(row=5,column=0)
 botao_cadastrarPedidos = tk.Button(janela, text="Cadastrar Pedidos", command=app_Pedido.abrir_cadastrarPedido)
 botao_cadastrarPedidos.grid(row=6,column=0)
 
+botao_visualizarPedidos = tk.Button(janela, text="Visualizar Pedidos", command=app_Pedido.abrir_visualizarPedidos)
+botao_visualizarPedidos.grid(row=7,column=0)
+
+botao_fecharCaixa = tk.Button(janela, text="Fechar Caixa", command=app_Caixa.abrir_fecharCaixa)
+botao_fecharCaixa.grid(row=8,column=0)
 
 janela.mainloop()

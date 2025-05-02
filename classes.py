@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox,ttk
+from datetime import datetime
 import sqlite3
 
 ################Classe Cliente################################
@@ -305,7 +306,8 @@ class Pedido:
                 pagamento TEXT,
                 troco REAL,
                 taxa REAL,
-                total REAL
+                total REAL,
+                data TEXT
             )
         ''')
         self.conexao.commit()
@@ -313,7 +315,7 @@ class Pedido:
     def abrir_cadastrarPedido(self):
         self.cadastrarPedido = tk.Toplevel()
         self.cadastrarPedido.title('Cadastrar Pedido')
-        self.cadastrarPedido.geometry('1000x1000')
+        self.cadastrarPedido.geometry('530x310')
 
         self.cursor.execute("SELECT id, nome FROM clientes")
         clientes = self.cursor.fetchall()
@@ -408,6 +410,7 @@ class Pedido:
 
     def salvar_Pedido(self):
         cliente_id = self.combo_cliente.get().split(" - ")[0]
+        data_hoje = datetime.now().strftime("%d-%m-%Y")
         dados = (
             cliente_id,
             self.combo_prato.get(),
@@ -418,26 +421,93 @@ class Pedido:
             self.pagamento.get(),
             float(self.troco.get() or 0),
             float(self.taxa.get() or 0),
-            float(self.total.get() or 0)
+            float(self.total.get() or 0),
+            data_hoje
         )
 
         self.cursor.execute('''
-            INSERT INTO pedidos (cliente_id, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
+            INSERT INTO pedidos (cliente_id, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
         ''', dados)
         self.conexao.commit()
         messagebox.showinfo("Sucesso", "Pedido salvo!!!")
         self.cadastrarPedido.destroy()
 
+    def abrir_visualizarPedidos(self):
+        self.visualizarPedidos = tk.Toplevel()
+        self.visualizarPedidos.title('Visualizar Pedidos')
+        self.visualizarPedidos.geometry('300x500')
 
+        tree = ttk.Treeview(self.visualizarPedidos, columns=("ID Cliente","Prato","Acomp 1","Acomp 2","Tamanho","Pagamento","Troco","Taxa","Total"), show="headings")
+        tree.heading("ID Cliente",text="ID Cliente")
+        tree.heading("Prato",text="Prato")
+        tree.heading("Acomp 1",text="Acomp 1")
+        tree.heading("Acomp 2",text="Acomp 2")
+        tree.heading("Tamanho",text="Tamanho")
+        tree.heading("Pagamento",text="Pagamento")
+        tree.heading("Troco",text="Troco")
+        tree.heading("Taxa",text="Taxa")
+        tree.heading("Total",text="Total")
 
-
-
-
-
-
+        tree.column("ID Cliente", width=30)
+        tree.column("Prato", width=30)
+        tree.column("Acomp 1", width=30)
+        tree.column("Acomp 2", width=30)
+        tree.column("Tamanho", width=30)
+        tree.column("Pagamento", width=30)
+        tree.column("Troco", width=30)
+        tree.column("Taxa", width=30)
+        tree.column("Total", width=30)
         
+        tree.pack(expand=True, fill="both")
+
+        self.cursor.execute("""
+            SELECT cliente_id, prato, acompanhamento1, acompanhamento2,
+                tamanho, pagamento, troco, taxa, total
+            FROM pedidos
+        """)
+
+        dados = self.cursor.fetchall()
+
+        for pedidos in dados:
+            tree.insert("", "end", values=pedidos)
+
 
 ########FIM da Classe Pedidos####################################
+
+class Caixa:
+    def __init__(self):
+        self.fecharCaixa = None
+        self.conexao = sqlite3.connect('bomapetite.db')
+        self.cursor = self.conexao.cursor()
+
+    def abrir_fecharCaixa(self):
+        hoje = datetime.now().strftime("%d-%m-%Y")
+
+        self.cursor.execute("SELECT pagamento, total FROM pedidos WHERE data = ?", (hoje,))
+        pedidos = self.cursor.fetchall()
+
+        total_geral = 0
+        formas_pagamento = {}
+
+        for pagamento, valor in pedidos:
+            total_geral += valor
+            if pagamento in formas_pagamento:
+                formas_pagamento[pagamento] += valor
+            else:
+                formas_pagamento[pagamento] = valor
+
+        self.fecharCaixa = tk.Toplevel()
+        self.fecharCaixa.geometry('500x200')
+        self.fecharCaixa.title('Fechar o Caixa - ' + hoje)
+
+        tk.Label(self.fecharCaixa, text=f"Total Geral do Dia: R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
+
+        tk.Label(self.fecharCaixa, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
+
+        for metodo, total in formas_pagamento.items():
+            tk.Label(self.fecharCaixa, text=f"{metodo}: R$ {total:.2f}").pack(anchor='w', padx=10)
+
+        
 
 
