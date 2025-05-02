@@ -1,5 +1,7 @@
 #Próximos passos para implementar:
 
+#Imprimir pedido apos o salvamento
+
 #Botão de excluir cliente selecionado
 
 #Edição de cliente (clicar numa linha e abrir para editar)
@@ -10,12 +12,9 @@
 
 #Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
 
-#Funcao para salvar todos os dados do dia, marmitas vendidas, valores e etc e salvar em uma tabela para acompanhar como foi o mes 
-
 #Pesquisar como organizar melhor o codigo 
 
 #Estudar algumas linhas de codigo da classe pedido que nao entendi completamente
 
 #Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
 
-#Resolver bugs da classe Pedido

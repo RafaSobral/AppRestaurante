@@ -109,6 +109,7 @@ class Cliente:
         botao_voltar.grid(row = 7, column = 0)
 
 
+
 ################FIM da Classe Cliente################################
 
 
@@ -122,6 +123,7 @@ class Prato:
 
         self.nome = None 
         self.descricao = None 
+        self.gerenciarPratos = None
 
     def criar_tabela(self):
         self.cursor.execute('''
@@ -193,6 +195,82 @@ class Prato:
 
         botao_voltar = tk.Button(self.cadastrarPratos, text="Fechar", command=self.cadastrarPratos.destroy)
         botao_voltar.grid(row=7, column=0)
+
+    def abrir_gerenciarPratos(self):
+        self.gerenciarPratos = tk.Toplevel()
+        self.gerenciarPratos.title("Gerenciar Pratos:")
+        self.gerenciarPratos.geometry('300x500')
+
+        self.tree = ttk.Treeview(self.gerenciarPratos, columns=("id","nome","descricao"), show="headings")
+        self.tree.heading("id",text="ID")
+        self.tree.heading("nome",text="Nome")
+        self.tree.heading("descricao", text="Descricao")
+
+        self.tree.column("id",width=50)
+        self.tree.column("nome", width=50)
+        self.tree.column("descricao", width=50)
+
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.cursor.execute("SELECT * FROM pratos")
+        for row in self.cursor.fetchall():
+            self.tree.insert("", "end", values=row)
+
+        botao_editar = tk.Button(self.gerenciarPratos, text="Editar", command=self.editar_prato)
+        botao_editar.pack(side="left", padx=10, pady=10)
+
+        botao_deletar = tk.Button(self.gerenciarPratos, text="Deletar", command=self.deletar_prato)
+        botao_deletar.pack(side="right", padx=10, pady=10)
+
+    def editar_prato(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione um prato para editar")
+            return
+        
+        prato_id, nome_antigo, descricao_antiga = self.tree.item(selected[0], "values")
+
+        janela_editar = tk.Toplevel()
+        janela_editar.title("Editar prato")
+
+        tk.Label(janela_editar, text="Nome").pack()
+        nome_entry = tk.Entry(janela_editar)
+        nome_entry.insert(0, nome_antigo)
+        nome_entry.pack()
+
+        tk.Label(janela_editar, text="Descricao").pack()
+        descricao_entry = tk.Entry(janela_editar)
+        descricao_entry.insert(0, descricao_antiga)
+        descricao_entry.pack()
+
+        def salvar_edicao():
+            novo_nome = nome_entry.get()
+            nova_descricao = descricao_entry.get()
+            self.cursor.execute("UPDATE pratos SET nome=?, descricao=? WHERE id=?", (novo_nome, nova_descricao, prato_id))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Prato atualizado com sucesso")
+            janela_editar.destroy()
+            self.gerenciarPratos.destroy()
+            self.abrir_gerenciarPratos()
+
+        tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+
+    def deletar_prato(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso:","Selecione um prato para deletar")
+            return
+        
+        prato_id = self.tree.item(selected[0], "values")[0]
+
+        confirm = messagebox.askyesno("confimar", "Tem certeza que deseja excluir esse prato?")
+        if confirm:
+            self.cursor.execute("DELETE FROM pratos WHERE id=?", (prato_id,))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Prato deletado com Sucesso!")
+            self.tree.delete(selected[0])
+
+
         
 
 ################FIM da Classe PRATOS####################################
@@ -307,7 +385,7 @@ class Pedido:
                 troco REAL,
                 taxa REAL,
                 total REAL,
-                data TEXT
+                data_hoje TEXT
             )
         ''')
         self.conexao.commit()
@@ -484,7 +562,7 @@ class Caixa:
     def abrir_fecharCaixa(self):
         hoje = datetime.now().strftime("%d-%m-%Y")
 
-        self.cursor.execute("SELECT pagamento, total FROM pedidos WHERE data = ?", (hoje,))
+        self.cursor.execute("SELECT pagamento, total FROM pedidos WHERE data_hoje = ?", (hoje,))
         pedidos = self.cursor.fetchall()
 
         total_geral = 0
