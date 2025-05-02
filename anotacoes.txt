@@ -2,10 +2,6 @@
 
 #Imprimir pedido apos o salvamento
 
-#Botão de excluir cliente selecionado
-
-#Edição de cliente (clicar numa linha e abrir para editar)
-
 #Buscar clientes por nome ou telefone
 
 #Separar a classe de banco em outro arquivo (DAO)
