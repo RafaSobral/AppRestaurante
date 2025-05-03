@@ -1,7 +1,5 @@
 #Próximos passos para implementar:
 
-#Imprimir pedido apos o salvamento
-
 #Buscar clientes por nome ou telefone
 
 #consertar radiobutton's da janela de cadastrar pedido
@@ -18,3 +16,4 @@
 
 #mudar nomeclatura de algumas funcoes e comentar o codigo
 
+#resolver confusao do id do cliente e id do pedido na tabela pedido

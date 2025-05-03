@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox,ttk
 from datetime import datetime
 import sqlite3
+import serial
+
 
 ################Classe Cliente################################
 
@@ -649,19 +651,26 @@ class Pedido:
 
     def salvar_Pedido(self):
         cliente_id = self.combo_cliente.get().split(" - ")[0]
+        nome_cliente = self.combo_cliente.get().split(" - ")[1]
+        prato = self.combo_prato.get()
+        acomp1 = self.acomp1.get()
+        acomp2 = self.acomp2.get()
+        observacao = self.observacao.get()
+        tamanho = self.tamanho.get()
+        pagamento = self.pagamento.get()
+        troco = float(self.troco.get() or 0)
+        taxa = float(self.taxa.get() or 0)
+        total = float(self.total.get() or 0)
         data_hoje = datetime.now().strftime("%d-%m-%Y")
+
+        # Novos dados do cliente
+        endereco = self.endereco.get()
+        telefone = self.telefone.get()
+        referencia = self.referencia.get()
+
         dados = (
-            cliente_id,
-            self.combo_prato.get(),
-            self.acomp1.get(),
-            self.acomp2.get(),
-            self.observacao.get(),
-            self.tamanho.get(),
-            self.pagamento.get(),
-            float(self.troco.get() or 0),
-            float(self.taxa.get() or 0),
-            float(self.total.get() or 0),
-            data_hoje
+            cliente_id, prato, acomp1, acomp2, observacao,
+            tamanho, pagamento, troco, taxa, total, data_hoje
         )
 
         self.cursor.execute('''
@@ -669,8 +678,64 @@ class Pedido:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
         ''', dados)
         self.conexao.commit()
-        messagebox.showinfo("Sucesso", "Pedido salvo!!!")
+
+        pedido = {
+            "cliente_id": cliente_id,
+            "nome_cliente": nome_cliente,
+            "endereco": endereco,
+            "telefone": telefone,
+            "referencia": referencia,
+            "prato": prato,
+            "acomp1": acomp1,
+            "acomp2": acomp2,
+            "observacao": observacao,
+            "tamanho": tamanho,
+            "pagamento": pagamento,
+            "troco": troco,
+            "taxa": taxa,
+            "total": total,
+            "data_hoje": data_hoje
+        }
+
+        self.imprimir_pedido_daruma_por_dados(pedido)
+
         self.cadastrarPedido.destroy()
+        messagebox.showinfo("Sucesso", "Pedido salvo e impresso!")
+
+
+
+    def imprimir_pedido_daruma_por_dados(self, pedido):
+        try:
+            porta = serial.Serial('COM3', baudrate=9600, timeout=1)
+            texto = f"""
+*** Bom Apetite ***
+------------------------
+Cliente: {pedido['nome_cliente']}
+Endereço: {pedido['endereco']}
+Telefone: {pedido['telefone']}
+Referência: {pedido['referencia']}
+------------------------
+Prato: {pedido['prato']}
+Acomp1: {pedido['acomp1']}
+Acomp2: {pedido['acomp2']}
+Obs: {pedido['observacao']}
+Tamanho: {pedido['tamanho']}
+Pagamento: {pedido['pagamento']}
+Troco: R$ {pedido['troco']}
+Taxa: R$ {pedido['taxa']}
+Total: R$ {pedido['total']}
+Data: {pedido['data_hoje']}
+------------------------
+
+"""
+            porta.write(texto.encode('utf-8'))
+            porta.write(b'\n\n\n')  # Avança papel
+            porta.close()
+            messagebox.showinfo("Sucesso", "Pedido enviado para a impressora.")
+        except Exception as e:
+            messagebox.showerror("Erro na impressão", f"Erro: {e}")
+
+        
 
     def abrir_visualizarPedidos(self):
         self.visualizarPedidos = tk.Toplevel()
@@ -716,8 +781,8 @@ class Pedido:
         self.gerenciarPedidos.title("Gerenciar Pedidos")
         self.gerenciarPedidos.geometry('300x500')
         
-        self.tree = ttk.Treeview(self.gerenciarPedidos, columns=("cliente_id","prato","acomp1","acomp2","observacao","tamanho","pagamento","troco","taxa","total","data_hoje"), show="headings")
-        self.tree.heading("cliente_id", text="ID")
+        self.tree = ttk.Treeview(self.gerenciarPedidos, columns=("pedido_id","prato","acomp1","acomp2","observacao","tamanho","pagamento","troco","taxa","total","data_hoje"), show="headings")
+        self.tree.heading("pedido_id", text="Pedido ID")
         self.tree.heading("prato", text="Prato")
         self.tree.heading("acomp1", text="Acomp1")
         self.tree.heading("acomp2", text="Acomp2")
@@ -729,7 +794,7 @@ class Pedido:
         self.tree.heading("total", text="Total")
         self.tree.heading("data_hoje", text="Data")
 
-        self.tree.column("cliente_id", width=30)
+        self.tree.column("pedido_id", width=30)
         self.tree.column("prato", width=30)
         self.tree.column("acomp1", width=30)
         self.tree.column("acomp2", width=30)
@@ -755,14 +820,68 @@ class Pedido:
         botao_deletar = tk.Button(self.gerenciarPedidos, text="Deletar", command=self.deletar_pedido)
         botao_deletar.pack(side="right", padx=10, pady=10)
 
+
+        def imprimir_pedido_daruma():
+            selected = self.tree.selection()
+            if not selected:
+                messagebox.showwarning("Aviso", "Selecione um pedido para imprimir.")
+                return
+
+            valores = self.tree.item(selected[0], "values")
+            if len(valores) < 11:
+                messagebox.showerror("Erro", "Dados do pedido incompletos.")
+                return
+
+            pedido = {
+                "cliente_id": valores[0],
+                "prato": valores[1],
+                "acomp1": valores[2],
+                "acomp2": valores[3],
+                "observacao": valores[4],
+                "tamanho": valores[5],
+                "pagamento": valores[6],
+                "troco": valores[7],
+                "taxa": valores[8],
+                "total": valores[9],
+                "data_hoje": valores[10]
+            }
+
+            try:
+                porta = serial.Serial('COM3', baudrate=9600, timeout=1)
+                texto = f"""
+        *** Bom Apetite ***
+        ------------------------
+        Cliente ID: {pedido['cliente_id']}
+        Prato: {pedido['prato']}
+        Acomp1: {pedido['acomp1']}
+        Acomp2: {pedido['acomp2']}
+        Obs: {pedido['observacao']}
+        Tamanho: {pedido['tamanho']}
+        Pagamento: {pedido['pagamento']}
+        Troco: R$ {pedido['troco']}
+        Taxa: R$ {pedido['taxa']}
+        Total: R$ {pedido['total']}
+        Data: {pedido['data_hoje']}
+        ------------------------
+
+        """
+                porta.write(texto.encode('utf-8'))
+                porta.write(b'\n\n\n')  # Avança papel
+                porta.close()
+                messagebox.showinfo("Sucesso", "Pedido enviado para a impressora.")
+            except Exception as e:
+                messagebox.showerror("Erro na impressão", f"Erro: {e}")
+
+        btn_imprimir = tk.Button(self.gerenciarPedidos, text="Imprimir Pedido", command=imprimir_pedido_daruma)
+        btn_imprimir.pack(side="right", padx=20, pady=10)
+
     def editar_pedido(self):
         selected = self.tree.selection()
         if not selected:
             messagebox.showwarning("Aviso","Selecione um pedido para editar")
             return
-        
 
-        cliente_id, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, data_hoje = self.tree.item(selected[0], "values")
+        id, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, data_hoje = self.tree.item(selected[0], "values")
 
         janela_editar = tk.Toplevel()
         janela_editar.title('Editar Pedido')
@@ -823,7 +942,7 @@ class Pedido:
             nova_taxa = taxa_entry.get()
             novo_total = total_entry.get()
 
-            self.cursor.execute("UPDATE pedidos SET prato=?, acomp1=?, acomp2=?, observacao=?, tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE cliente_id=?", (novo_prato, novo_acomp1, novo_acomp2, nova_observacao, novo_tamanho, novo_pagamento, novo_troco, nova_taxa, novo_total, cliente_id))
+            self.cursor.execute("UPDATE pedidos SET prato=?, acomp1=?, acomp2=?, observacao=?, tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?", (novo_prato, novo_acomp1, novo_acomp2, nova_observacao, novo_tamanho, novo_pagamento, novo_troco, nova_taxa, novo_total, id))
             self.conexao.commit()
             messagebox.showinfo("Sucesso","Pedido atualizado com sucesso")
             janela_editar.destroy()
@@ -842,10 +961,14 @@ class Pedido:
 
         confirm = messagebox.askyesno("Confirmar","Tem certeza que deseja excluir esse Pedido?")
         if confirm:
-            self.cursor.execute("DELETE FROM pedidos WHERE cliente_id=?", (pedido_id,))
+            self.cursor.execute("DELETE FROM pedidos WHERE id=?", (pedido_id,))
             self.conexao.commit()
             messagebox.showinfo("Sucesso","Pedido deletado com sucesso")        
             self.tree.delete(selected[0])
+
+
+    
+
 
 
 

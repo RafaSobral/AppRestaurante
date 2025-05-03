@@ -51,4 +51,7 @@ botao_gerenciarPedidos.grid(row=3,column=2)
 botao_fecharCaixa = tk.Button(janela, text="Fechar Caixa", command=app_Caixa.abrir_fecharCaixa)
 botao_fecharCaixa.grid(row=8,column=0)
 
+
+
+
 janela.mainloop()
