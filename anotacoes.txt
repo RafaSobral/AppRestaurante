@@ -1,9 +1,5 @@
 #Próximos passos para implementar:
 
-#Adicionar funcao para buscar o cliente ao digitar o nome
-
-#funcao para imprimir fechamento de caixa
-
 #adicionar botoes de atalho para agilizar a digitacao
 
 #Pesquisar como organizar melhor o codigo 

@@ -644,7 +644,6 @@ class Pedido:
         messagebox.showinfo("Sucesso", "Pedido salvo e impresso!")
 
 
-
     def imprimir_pedido_daruma_por_dados(self, pedido):
         try:
             porta = serial.Serial('COM3', baudrate=9600, timeout=1)
@@ -678,7 +677,6 @@ Data: {pedido['data_hoje']}
         except Exception as e:
             messagebox.showerror("Erro na impressão", f"Erro: {e}")
 
-        
 
     def abrir_gerenciarPedidos(self):
         self.gerenciarPedidos = tk.Toplevel()
@@ -877,11 +875,6 @@ Data: {pedido['data_hoje']}
             self.tree.delete(selected[0])
 
 
-    
-
-
-
-
 ########FIM da Classe Pedidos####################################
 
 class Caixa:
@@ -892,30 +885,102 @@ class Caixa:
 
     def abrir_fecharCaixa(self):
         hoje = datetime.now().strftime("%d-%m-%Y")
-
-        self.cursor.execute("SELECT pagamento, total FROM pedidos WHERE data_hoje = ?", (hoje,))
+        self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (hoje,))
         pedidos = self.cursor.fetchall()
 
         total_geral = 0
+        total_troco = 0
+        total_taxa = 0
         formas_pagamento = {}
+        tamanhos_marmita = {}
 
-        for pagamento, valor in pedidos:
+        for pagamento, valor, tamanho, troco, taxa in pedidos:
             total_geral += valor
+            total_troco += troco
+            total_taxa += taxa
+
             if pagamento in formas_pagamento:
                 formas_pagamento[pagamento] += valor
             else:
                 formas_pagamento[pagamento] = valor
 
+            if tamanho in tamanhos_marmita:
+                tamanhos_marmita[tamanho] += 1
+            else:
+                tamanhos_marmita[tamanho] = 1
+
         self.fecharCaixa = tk.Toplevel()
-        self.fecharCaixa.geometry('500x200')
-        self.fecharCaixa.title('Fechar o Caixa - ' + hoje)
+        self.fecharCaixa.geometry("500x280")
+        self.fecharCaixa.title("Fechar o Caixa - " + hoje)
 
         tk.Label(self.fecharCaixa, text=f"Total Geral do Dia: R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
-
         tk.Label(self.fecharCaixa, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
 
         for metodo, total in formas_pagamento.items():
             tk.Label(self.fecharCaixa, text=f"{metodo}: R$ {total:.2f}").pack(anchor='w', padx=10)
+
+        mapa_tamanhos = {
+            '13': 'Pequena',
+            '15': 'Media',
+            '18': 'Grande',
+        }
+
+        tk.Label(self.fecharCaixa, text="\nTotal de Marmitas por Tamanho:", font=("Arial", 10, "underline")).pack()
+
+        for tamanho, quantidade in tamanhos_marmita.items():
+            descricao = mapa_tamanhos.get(str(tamanho), str(tamanho))  
+            tk.Label(self.fecharCaixa, text=f"{descricao}: {quantidade}x").pack(anchor='w', padx=10)
+
+
+        tk.Label(self.fecharCaixa, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
+        tk.Label(self.fecharCaixa, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
+
+        btn_imprimir_caixa = tk.Button(self.fecharCaixa, text="Imprimir Fechamento", command=lambda: self.imprimir_fechamento_caixa(
+        total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje))
+        btn_imprimir_caixa.pack(pady=10)
+
+
+    def imprimir_fechamento_caixa(self, total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje):
+        mapa_tamanhos = {'13': 'P', '12': 'M', '11': 'G'}  # ajuste conforme necessário
+
+        try:
+            porta = serial.Serial('COM3', baudrate=9600, timeout=1)
+
+            texto = f"""
+    *** Bom Apetite ***
+    --- Fechamento do Caixa ---
+    Data: {hoje}
+
+    Total Geral do Dia: R$ {total_geral:.2f}
+
+    -- Por Forma de Pagamento --
+    """
+            for metodo, total in formas_pagamento.items():
+                texto += f"{metodo}: R$ {total:.2f}\n"
+
+            texto += "\n-- Marmitas por Tamanho --\n"
+            for cod, qtd in tamanhos_marmita.items():
+                tamanho = mapa_tamanhos.get(str(cod), str(cod))
+                texto += f"{tamanho}: {qtd}x\n"
+
+            texto += f"""
+    Troco Total: R$ {total_troco:.2f}
+    Taxa Total: R$ {total_taxa:.2f}
+    ------------------------
+
+
+    
+    """
+
+            porta.write(texto.encode('utf-8'))
+            porta.write(b'\n\n\n')  # Avança papel
+            porta.close()
+            messagebox.showinfo("Sucesso", "Fechamento de caixa enviado para a impressora.")
+
+        except Exception as e:
+            messagebox.showerror("Erro na impressão", f"Erro: {e}")
+
+        
 
         
 
