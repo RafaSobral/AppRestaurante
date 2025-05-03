@@ -538,7 +538,7 @@ class Pedido:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS pedidos(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                cliente_id INTEGER,
+                pedido_id INTEGER,
                 nome_cliente TEXT,
                 prato TEXT,
                 acompanhamento1 TEXT,
@@ -606,13 +606,13 @@ class Pedido:
         self.tamanho = tk.StringVar()
         tamanhos =[("P","13"),("M","15"),("G","18")]
         for i, (txt, val) in enumerate(tamanhos):
-            tk.Radiobutton(self.cadastrarPedido, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).grid(row=8, column=i+1)
+            tk.Radiobutton(self.cadastrarPedido, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).grid(row=8, column=1 + i, sticky="w", padx=5)
 
         tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0)
         self.pagamento = tk.StringVar()
         pagamentos =["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
         for i, op in enumerate(pagamentos):
-            tk.Radiobutton(self.cadastrarPedido, text=op, variable=self.pagamento, value=op).grid(row=9, column=1 + i)
+            tk.Radiobutton(self.cadastrarPedido, text=op, variable=self.pagamento, value=op).grid(row=9, column=1 + i, sticky="w", padx=5)
 
         tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=10, column=0)
         self.troco = tk.Entry(self.cadastrarPedido)
@@ -651,7 +651,7 @@ class Pedido:
             self.total.set("")
 
     def salvar_Pedido(self):
-        cliente_id = self.combo_cliente.get().split(" - ")[0]
+        pedido_id = self.combo_cliente.get().split(" - ")[0]
         nome_cliente = self.combo_cliente.get().split(" - ")[1]
         prato = self.combo_prato.get()
         acomp1 = self.acomp1.get()
@@ -664,24 +664,23 @@ class Pedido:
         total = float(self.total.get() or 0)
         data_hoje = datetime.now().strftime("%d-%m-%Y")
 
-        # Novos dados do cliente
         endereco = self.endereco.get()
         telefone = self.telefone.get()
         referencia = self.referencia.get()
 
         dados = (
-            cliente_id, nome_cliente, prato, acomp1, acomp2, observacao,
+            pedido_id, nome_cliente, prato, acomp1, acomp2, observacao,
             tamanho, pagamento, troco, taxa, total, data_hoje
         )
 
         self.cursor.execute('''
-            INSERT INTO pedidos (cliente_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje)
+            INSERT INTO pedidos (pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
         ''', dados)
         self.conexao.commit()
 
         pedido = {
-            "cliente_id": cliente_id,
+            "pedido_id": pedido_id,
             "nome_cliente": nome_cliente,
             "endereco": endereco,
             "telefone": telefone,
@@ -728,6 +727,8 @@ Total: R$ {pedido['total']}
 Data: {pedido['data_hoje']}
 ------------------------
 
+
+
 """
             porta.write(texto.encode('utf-8'))
             porta.write(b'\n\n\n')  # Avança papel
@@ -743,8 +744,8 @@ Data: {pedido['data_hoje']}
         self.visualizarPedidos.title('Visualizar Pedidos')
         self.visualizarPedidos.geometry('300x500')
 
-        tree = ttk.Treeview(self.visualizarPedidos, columns=("ID Cliente","Nome Cliente","Prato","Acomp 1","Acomp 2","Tamanho","Pagamento","Troco","Taxa","Total"), show="headings")
-        tree.heading("ID Cliente",text="ID Cliente")
+        tree = ttk.Treeview(self.visualizarPedidos, columns=("ID Pedido","Nome Cliente","Prato","Acomp 1","Acomp 2","Tamanho","Pagamento","Troco","Taxa","Total"), show="headings")
+        tree.heading("ID Pedido",text="ID Pedido")
         tree.heading("Nome Cliente",text="Nome Cliente")
         tree.heading("Prato",text="Prato")
         tree.heading("Acomp 1",text="Acomp 1")
@@ -755,7 +756,7 @@ Data: {pedido['data_hoje']}
         tree.heading("Taxa",text="Taxa")
         tree.heading("Total",text="Total")
 
-        tree.column("ID Cliente", width=30)
+        tree.column("ID Pedido", width=30)
         tree.column("Nome Cliente", width=30)
         tree.column("Prato", width=30)
         tree.column("Acomp 1", width=30)
@@ -769,7 +770,7 @@ Data: {pedido['data_hoje']}
         tree.pack(expand=True, fill="both")
 
         self.cursor.execute("""
-            SELECT cliente_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
+            SELECT pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
                 tamanho, pagamento, troco, taxa, total
             FROM pedidos
         """)
@@ -833,22 +834,23 @@ Data: {pedido['data_hoje']}
                 return
 
             valores = self.tree.item(selected[0], "values")
-            if len(valores) < 11:
+            if len(valores) < 12:
                 messagebox.showerror("Erro", "Dados do pedido incompletos.")
                 return
 
             pedido = {
-                "cliente_id": valores[0],
-                "prato": valores[1],
-                "acomp1": valores[2],
-                "acomp2": valores[3],
-                "observacao": valores[4],
-                "tamanho": valores[5],
-                "pagamento": valores[6],
-                "troco": valores[7],
-                "taxa": valores[8],
-                "total": valores[9],
-                "data_hoje": valores[10]
+                "pedido_id": valores[0],
+                "nome_cliente": valores[1],
+                "prato": valores[2],
+                "acomp1": valores[3],
+                "acomp2": valores[4],
+                "observacao": valores[5],
+                "tamanho": valores[6],
+                "pagamento": valores[7],
+                "troco": valores[8],
+                "taxa": valores[9],
+                "total": valores[10],
+                "data_hoje": valores[11]
             }
 
             try:
@@ -856,7 +858,8 @@ Data: {pedido['data_hoje']}
                 texto = f"""
         *** Bom Apetite ***
         ------------------------
-        Cliente ID: {pedido['cliente_id']}
+        Pedido ID: {pedido['pedido_id']}
+        Nome Cliente: {pedido['nome_cliente']}
         Prato: {pedido['prato']}
         Acomp1: {pedido['acomp1']}
         Acomp2: {pedido['acomp2']}
@@ -867,6 +870,8 @@ Data: {pedido['data_hoje']}
         Taxa: R$ {pedido['taxa']}
         Total: R$ {pedido['total']}
         Data: {pedido['data_hoje']}
+
+        
         ------------------------
 
         """

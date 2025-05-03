@@ -1,12 +1,12 @@
 #Próximos passos para implementar:
 
-#Buscar clientes por nome ou telefone
+#Adicionar funcao para buscar o cliente ao digitar o nome
 
-#consertar radiobutton's da janela de cadastrar pedido
+#funcao para imprimir fechamento de caixa
 
-#Separar a classe de banco em outro arquivo (DAO)
+#funcao para re-imprimir pedido sem precisar cadastrar outro
 
-#Criar funcao para dizer quanto o motoboy tem que me dar no final de cada corrida ou expediente
+#adicionar botoes de atalho para agilizar a digitacao
 
 #Pesquisar como organizar melhor o codigo 
 
@@ -16,4 +16,5 @@
 
 #mudar nomeclatura de algumas funcoes e comentar o codigo
 
-#resolver confusao do id do cliente e id do pedido na tabela pedido
+
+
