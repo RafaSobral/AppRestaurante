@@ -2,6 +2,13 @@
 
 #adicionar botoes de atalho para agilizar a digitacao
 
+#trabalhar no design da interface
+
+#erros:
+    -ao digitar o nome do cliente na busca nao esta preenchendo o endereco, telefone e referencia
+    -clique para selecionar o cliente nao funciona mais
+    -funcao para editar o pedido nao esta funcionando
+
 #Pesquisar como organizar melhor o codigo 
 
 #Estudar algumas linhas de codigo da classe pedido que nao entendi completamente
