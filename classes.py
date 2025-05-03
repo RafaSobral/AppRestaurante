@@ -53,34 +53,7 @@ class Cliente:
         messagebox.showinfo("Sucesso", "Cliente cadastrado!")
         self.cadastrarCliente.destroy()
 
-    def abrir_visualizarClientes(self):
-        self.visualizarClientes = tk.Toplevel()
-        self.visualizarClientes.title('Visualizar Clientes')
-        self.visualizarClientes.geometry("500x300")
-
-        tree = ttk.Treeview(self.visualizarClientes, columns=("id", "nome", "endereco", "telefone", "referencia"), show="headings")
-        tree.heading("id", text="ID")
-        tree.heading("nome", text="Nome")
-        tree.heading("endereco", text="Endereco")
-        tree.heading("telefone", text="Telefone")
-        tree.heading("referencia", text="Referencia")
-        
-        tree.column("id", width=30)
-        tree.column("nome", width=100)
-        tree.column("endereco", width=100)
-        tree.column("telefone", width=90)
-        tree.column("referencia", width=100)
-
-        tree.pack(expand=True, fill="both")
-
-        self.cursor.execute("SELECT * FROM clientes")
-        dados = self.cursor.fetchall()
-
-        for cliente in dados:
-            tree.insert("", "end", values=cliente)
-
-
-
+    
     def abrir_cadastrarCliente(self):
         self.cadastrarCliente = tk.Toplevel()
         self.cadastrarCliente.title('Cadastrar Cliente')
@@ -247,28 +220,6 @@ class Prato:
         messagebox.showinfo("Sucesso", "Prato cadastrado!")
         self.cadastrarPratos.destroy()
 
-    def abrir_visualizarPratos(self):
-        self.visualizarPratos = tk.Toplevel()
-        self.visualizarPratos.title('Visualizar Pratos')
-        self.visualizarPratos.geometry('500x300')
-
-        tree = ttk.Treeview(self.visualizarPratos, columns=("id", "nome", "descricao"), show="headings" )
-        tree.heading("id", text="ID")
-        tree.heading("nome", text="Nome")
-        tree.heading("descricao", text="Descricao")
-
-        tree.column("id", width=30)
-        tree.column("nome", width=100)
-        tree.column("descricao", width=100)
-
-        tree.pack(expand=True, fill="both")
-
-        self.cursor.execute("SELECT * FROM pratos")
-        dados = self.cursor.fetchall()
-
-        for pratos in dados:
-            tree.insert("", "end", values=pratos)
-
 
 
     def abrir_cadastrarPratos(self):
@@ -420,25 +371,6 @@ class Acompanhamento:
         botao_Salvar = tk.Button(self.cadastrarAcomp, text="Salvar", command=self.salvar_Acompanhamento)
         botao_Salvar.grid(row=1, column=1)
 
-    def abrir_visualizarAcompanhamentos(self):
-        self.visualizarAcomp = tk.Toplevel()
-        self.visualizarAcomp.title("Visualizar Acompanhamentos:")
-        self.visualizarAcomp.geometry("500x600")
-
-        tree = ttk.Treeview(self.visualizarAcomp, columns=("id","nome"), show="headings")
-        tree.heading("id", text="ID")
-        tree.heading("nome", text="Nome")
-
-        tree.column("id", width=30)
-        tree.column("nome", width=100)
-
-        tree.pack(expand=True, fill="both")
-
-        self.cursor.execute("SELECT * FROM acompanhamentos")
-        dados = self.cursor.fetchall()
-
-        for acompanhamento in dados:
-            tree.insert("", "end", values=acompanhamento)
 
     def abrir_gerenciarAcompanhamentos(self):
         self.gerenciarAcomp = tk.Toplevel()
@@ -738,47 +670,6 @@ Data: {pedido['data_hoje']}
             messagebox.showerror("Erro na impressão", f"Erro: {e}")
 
         
-
-    def abrir_visualizarPedidos(self):
-        self.visualizarPedidos = tk.Toplevel()
-        self.visualizarPedidos.title('Visualizar Pedidos')
-        self.visualizarPedidos.geometry('300x500')
-
-        tree = ttk.Treeview(self.visualizarPedidos, columns=("ID Pedido","Nome Cliente","Prato","Acomp 1","Acomp 2","Tamanho","Pagamento","Troco","Taxa","Total"), show="headings")
-        tree.heading("ID Pedido",text="ID Pedido")
-        tree.heading("Nome Cliente",text="Nome Cliente")
-        tree.heading("Prato",text="Prato")
-        tree.heading("Acomp 1",text="Acomp 1")
-        tree.heading("Acomp 2",text="Acomp 2")
-        tree.heading("Tamanho",text="Tamanho")
-        tree.heading("Pagamento",text="Pagamento")
-        tree.heading("Troco",text="Troco")
-        tree.heading("Taxa",text="Taxa")
-        tree.heading("Total",text="Total")
-
-        tree.column("ID Pedido", width=30)
-        tree.column("Nome Cliente", width=30)
-        tree.column("Prato", width=30)
-        tree.column("Acomp 1", width=30)
-        tree.column("Acomp 2", width=30)
-        tree.column("Tamanho", width=30)
-        tree.column("Pagamento", width=30)
-        tree.column("Troco", width=30)
-        tree.column("Taxa", width=30)
-        tree.column("Total", width=30)
-        
-        tree.pack(expand=True, fill="both")
-
-        self.cursor.execute("""
-            SELECT pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-                tamanho, pagamento, troco, taxa, total
-            FROM pedidos
-        """)
-
-        dados = self.cursor.fetchall()
-
-        for pedidos in dados:
-            tree.insert("", "end", values=pedidos)
 
     def abrir_gerenciarPedidos(self):
         self.gerenciarPedidos = tk.Toplevel()
