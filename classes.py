@@ -493,12 +493,21 @@ class Pedido:
 
         self.cursor.execute("SELECT id, nome FROM clientes")
         clientes = self.cursor.fetchall()
-        nome_clientes = [f"{id} - {nome}" for id, nome in clientes]
+        self.nome_clientes = [f"{id} - {nome}" for id, nome in clientes]
 
         tk.Label(self.cadastrarPedido, text="Nome:").grid(row=0, column=0)
-        self.combo_cliente = ttk.Combobox(self.cadastrarPedido, values=nome_clientes)
+        self.combo_cliente = ttk.Combobox(self.cadastrarPedido, values=self.nome_clientes)
         self.combo_cliente.grid(row=0, column=1)
         self.combo_cliente.bind("<<ComboboxSelected>>", self.preencher_dados_cliente)
+        self.combo_cliente.bind("<Return>", self.selecionar_cliente_por_nome)  # ⬅️ Adiciona suporte ao Enter
+
+    def selecionar_cliente_por_nome(self, event):
+        texto_digitado = self.combo_cliente.get().strip().lower()
+        for nome_completo in self.nome_clientes:
+            if texto_digitado in nome_completo.lower():
+                self.combo_cliente.set(nome_completo)
+                break
+
 
         self.endereco = tk.Entry(self.cadastrarPedido)
         self.endereco.grid(row=1, column=1)

@@ -4,8 +4,6 @@
 
 #funcao para imprimir fechamento de caixa
 
-#funcao para re-imprimir pedido sem precisar cadastrar outro
-
 #adicionar botoes de atalho para agilizar a digitacao
 
 #Pesquisar como organizar melhor o codigo 
