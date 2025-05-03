@@ -539,6 +539,7 @@ class Pedido:
             CREATE TABLE IF NOT EXISTS pedidos(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 cliente_id INTEGER,
+                nome_cliente TEXT,
                 prato TEXT,
                 acompanhamento1 TEXT,
                 acompanhamento2 TEXT,
@@ -669,13 +670,13 @@ class Pedido:
         referencia = self.referencia.get()
 
         dados = (
-            cliente_id, prato, acomp1, acomp2, observacao,
+            cliente_id, nome_cliente, prato, acomp1, acomp2, observacao,
             tamanho, pagamento, troco, taxa, total, data_hoje
         )
 
         self.cursor.execute('''
-            INSERT INTO pedidos (cliente_id, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
+            INSERT INTO pedidos (cliente_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
         ''', dados)
         self.conexao.commit()
 
@@ -742,8 +743,9 @@ Data: {pedido['data_hoje']}
         self.visualizarPedidos.title('Visualizar Pedidos')
         self.visualizarPedidos.geometry('300x500')
 
-        tree = ttk.Treeview(self.visualizarPedidos, columns=("ID Cliente","Prato","Acomp 1","Acomp 2","Tamanho","Pagamento","Troco","Taxa","Total"), show="headings")
+        tree = ttk.Treeview(self.visualizarPedidos, columns=("ID Cliente","Nome Cliente","Prato","Acomp 1","Acomp 2","Tamanho","Pagamento","Troco","Taxa","Total"), show="headings")
         tree.heading("ID Cliente",text="ID Cliente")
+        tree.heading("Nome Cliente",text="Nome Cliente")
         tree.heading("Prato",text="Prato")
         tree.heading("Acomp 1",text="Acomp 1")
         tree.heading("Acomp 2",text="Acomp 2")
@@ -754,6 +756,7 @@ Data: {pedido['data_hoje']}
         tree.heading("Total",text="Total")
 
         tree.column("ID Cliente", width=30)
+        tree.column("Nome Cliente", width=30)
         tree.column("Prato", width=30)
         tree.column("Acomp 1", width=30)
         tree.column("Acomp 2", width=30)
@@ -766,7 +769,7 @@ Data: {pedido['data_hoje']}
         tree.pack(expand=True, fill="both")
 
         self.cursor.execute("""
-            SELECT cliente_id, prato, acompanhamento1, acompanhamento2,
+            SELECT cliente_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
                 tamanho, pagamento, troco, taxa, total
             FROM pedidos
         """)
@@ -781,8 +784,9 @@ Data: {pedido['data_hoje']}
         self.gerenciarPedidos.title("Gerenciar Pedidos")
         self.gerenciarPedidos.geometry('300x500')
         
-        self.tree = ttk.Treeview(self.gerenciarPedidos, columns=("pedido_id","prato","acomp1","acomp2","observacao","tamanho","pagamento","troco","taxa","total","data_hoje"), show="headings")
+        self.tree = ttk.Treeview(self.gerenciarPedidos, columns=("pedido_id","Nome Cliente","prato","acomp1","acomp2","observacao","tamanho","pagamento","troco","taxa","total","data_hoje"), show="headings")
         self.tree.heading("pedido_id", text="Pedido ID")
+        self.tree.heading("Nome Cliente",text="Nome Cliente")
         self.tree.heading("prato", text="Prato")
         self.tree.heading("acomp1", text="Acomp1")
         self.tree.heading("acomp2", text="Acomp2")
@@ -795,6 +799,7 @@ Data: {pedido['data_hoje']}
         self.tree.heading("data_hoje", text="Data")
 
         self.tree.column("pedido_id", width=30)
+        self.tree.column("Nome Cliente", width=30)
         self.tree.column("prato", width=30)
         self.tree.column("acomp1", width=30)
         self.tree.column("acomp2", width=30)
@@ -808,7 +813,7 @@ Data: {pedido['data_hoje']}
 
         self.tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-        self.cursor.execute("SELECT id, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
+        self.cursor.execute("SELECT id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
 
 
         for row in self.cursor.fetchall():
