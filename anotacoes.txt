@@ -1,13 +1,10 @@
 #Próximos passos para implementar:
 
-#adicionar botoes de atalho para agilizar a digitacao
+#funcao aonde eu selecione o periodo (mes ou ano) e ele imprime o fechamento de caixa daquele periodo
 
 #trabalhar no design da interface
 
-#erros:
-    -ao digitar o nome do cliente na busca nao esta preenchendo o endereco, telefone e referencia
-    -clique para selecionar o cliente nao funciona mais
-    -funcao para editar o pedido nao esta funcionando
+#criar um arquivo exe
 
 #Pesquisar como organizar melhor o codigo 
 

@@ -78,11 +78,17 @@ class Cliente:
         self.referencia = tk.Entry(self.cadastrarCliente)
         self.referencia.grid(row=3, column=1)
 
-        botao_salvar = tk.Button(self.cadastrarCliente, text="Salvar", command=self.salvar_cliente)
+        botao_salvar = tk.Button(self.cadastrarCliente, text="Salvar (1)", command=self.salvar_cliente)
         botao_salvar.grid(row=6, column=0)
+        def acionar_salvar(event=None):
+            botao_salvar.invoke()
+        self.cadastrarCliente.bind("1", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarCliente, text="Fechar", command=self.cadastrarCliente.destroy)
+        botao_voltar = tk.Button(self.cadastrarCliente, text="Fechar (2)", command=self.cadastrarCliente.destroy)
         botao_voltar.grid(row = 7, column = 0)
+        def acionar_voltar(event=None):
+            botao_voltar.invoke()
+        self.cadastrarCliente.bind("2", acionar_voltar)
 
     def abrir_gerenciarClientes(self):
         self.gerenciarClientes = tk.Toplevel()
@@ -237,11 +243,17 @@ class Prato:
         self.descricao = tk.Entry(self.cadastrarPratos)
         self.descricao.grid(row=1,column=1)
 
-        botao_salvar = tk.Button(self.cadastrarPratos, text="Salvar", command=self.salvar_prato)
+        botao_salvar = tk.Button(self.cadastrarPratos, text="Salvar(1)", command=self.salvar_prato)
         botao_salvar.grid(row=6, column=0)
+        def acionar_salvar(event=None):
+            botao_salvar.invoke()
+        self.cadastrarPratos.bind("1", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPratos, text="Fechar", command=self.cadastrarPratos.destroy)
+        botao_voltar = tk.Button(self.cadastrarPratos, text="Fechar(2)", command=self.cadastrarPratos.destroy)
         botao_voltar.grid(row=7, column=0)
+        def acionar_voltar(event=None):
+            botao_voltar.invoke()
+        self.cadastrarPratos.bind("2", acionar_voltar)
 
     def abrir_gerenciarPratos(self):
         self.gerenciarPratos = tk.Toplevel()
@@ -368,8 +380,18 @@ class Acompanhamento:
         self.acomp = tk.Entry(self.cadastrarAcomp)
         self.acomp.grid(row=0, column=1)
 
-        botao_Salvar = tk.Button(self.cadastrarAcomp, text="Salvar", command=self.salvar_Acompanhamento)
+        botao_Salvar = tk.Button(self.cadastrarAcomp, text="Salvar(1)", command=self.salvar_Acompanhamento)
         botao_Salvar.grid(row=1, column=1)
+        def acionar_salvar(event=None):
+            botao_Salvar.invoke()
+        self.cadastrarAcomp.bind("1", acionar_salvar)
+
+        botao_voltar = tk.Button(self.cadastrarAcomp, text="Fechar(2)", command=self.cadastrarAcomp.destroy)
+        botao_voltar.grid(row = 1, column = 2)
+        def acionar_voltar(event=None):
+            botao_voltar.invoke()
+        self.cadastrarAcomp.bind("2", acionar_voltar)
+        
 
 
     def abrir_gerenciarAcompanhamentos(self):
@@ -499,15 +521,6 @@ class Pedido:
         self.combo_cliente = ttk.Combobox(self.cadastrarPedido, values=self.nome_clientes)
         self.combo_cliente.grid(row=0, column=1)
         self.combo_cliente.bind("<<ComboboxSelected>>", self.preencher_dados_cliente)
-        self.combo_cliente.bind("<Return>", self.selecionar_cliente_por_nome)  # ⬅️ Adiciona suporte ao Enter
-
-    def selecionar_cliente_por_nome(self, event):
-        texto_digitado = self.combo_cliente.get().strip().lower()
-        for nome_completo in self.nome_clientes:
-            if texto_digitado in nome_completo.lower():
-                self.combo_cliente.set(nome_completo)
-                break
-
 
         self.endereco = tk.Entry(self.cadastrarPedido)
         self.endereco.grid(row=1, column=1)
@@ -568,7 +581,17 @@ class Pedido:
         self.total = tk.StringVar()
         tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=12, column=1)
 
-        tk.Button(self.cadastrarPedido, text="Salvar Pedido", command=self.salvar_Pedido).grid(row=13, column=0)
+        botao_salvar = tk.Button(self.cadastrarPedido, text="Salvar Pedido(1)", command=self.salvar_Pedido)
+        botao_salvar.grid(row=13, column=0)
+        def acionar_salvar(event=None):
+            botao_salvar.invoke()
+        self.cadastrarPedido.bind("1", acionar_salvar)
+
+        botao_voltar = tk.Button(self.cadastrarPedido, text="Fechar (2)", command=self.cadastrarPedido.destroy)
+        botao_voltar.grid(row = 13, column = 1)
+        def acionar_voltar(event=None):
+            botao_voltar.invoke()
+        self.cadastrarPedido.bind("2", acionar_voltar)
 
     def preencher_dados_cliente(self, event):
         cliente_id = self.combo_cliente.get().split(" - ")[0]
@@ -718,6 +741,18 @@ Data: {pedido['data_hoje']}
         for row in self.cursor.fetchall():
             self.tree.insert("", "end", values=row)
 
+        def carregar_pedidos():
+            for i in self.tree.get_children():
+                self.tree.delete(i)
+            self.cursor.execute("SELECT id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
+            for row in self.cursor.fetchall():
+                self.tree.insert("", "end", values=row)
+            
+
+        botao_atualizar = tk.Button(self.gerenciarPedidos, text="Atualizar", command=carregar_pedidos)
+        botao_atualizar.pack(side="left", pady=10)
+
+
         botao_editar = tk.Button(self.gerenciarPedidos, text="Editar", command=self.editar_pedido)
         botao_editar.pack(side="left", padx=10, pady=10)
 
@@ -788,8 +823,15 @@ Data: {pedido['data_hoje']}
         if not selected:
             messagebox.showwarning("Aviso","Selecione um pedido para editar")
             return
+        
+        valores = self.tree.item(selected[0], "values")
+        print(f"Quantidade de valores: {len(valores)}")
+        print(valores)
 
-        id, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, data_hoje = self.tree.item(selected[0], "values")
+        id, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, data_hoje = self.tree.item(selected[0], "values")
+
+        
+
 
         janela_editar = tk.Toplevel()
         janela_editar.title('Editar Pedido')
@@ -850,7 +892,7 @@ Data: {pedido['data_hoje']}
             nova_taxa = taxa_entry.get()
             novo_total = total_entry.get()
 
-            self.cursor.execute("UPDATE pedidos SET prato=?, acomp1=?, acomp2=?, observacao=?, tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?", (novo_prato, novo_acomp1, novo_acomp2, nova_observacao, novo_tamanho, novo_pagamento, novo_troco, nova_taxa, novo_total, id))
+            self.cursor.execute("UPDATE pedidos SET prato=?, acompanhamento1=?, acompanhamento2=?, observacao=?, tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?", (novo_prato, novo_acomp1, novo_acomp2, nova_observacao, novo_tamanho, novo_pagamento, novo_troco, nova_taxa, novo_total, id))
             self.conexao.commit()
             messagebox.showinfo("Sucesso","Pedido atualizado com sucesso")
             janela_editar.destroy()
