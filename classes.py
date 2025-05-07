@@ -4,6 +4,8 @@ from datetime import datetime
 from tkcalendar import DateEntry
 import sqlite3
 import serial
+import locale
+from datetime import datetime
 
 
 ################Classe Cliente################################
@@ -734,6 +736,13 @@ class Caixa:
         self.conexao = sqlite3.connect('bomapetite.db')
         self.cursor = self.conexao.cursor()
 
+
+class Caixa:
+    def __init__(self):
+        self.fecharCaixa = None
+        self.conexao = sqlite3.connect('bomapetite.db')
+        self.cursor = self.conexao.cursor()
+
     def abrir_fecharCaixa(self):
         self.fecharCaixa = tk.Toplevel()
         self.fecharCaixa.geometry("400x600")
@@ -742,24 +751,40 @@ class Caixa:
 
         tk.Label(self.fecharCaixa, text="Para gerar o relatorio mensal, Coloque o dia como 00.").pack(pady=6)
         tk.Label(self.fecharCaixa, text="Selecionar Data:").pack(pady=5)
-        
+
         date_entry = DateEntry(self.fecharCaixa, width=12, background='darkblue',
                             foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
         date_entry.pack(pady=10)
 
         def obter_data():
-            data_str = date_entry.get()  # formato: dd/mm/yyyy
+            try:
+                locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')  # Linux/macOS
+            except:
+                locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')  # Windows fallback
+
+            # Limpa os widgets antigos
+            for widget in self.frame_conteudo.winfo_children():
+                widget.destroy()
+
+            data_str = date_entry.get()
             dia, mes, ano = data_str.split('/')
+            hoje = datetime.now().strftime("%d-%m-%Y")
+            data_selecionada = f"{dia}-{mes}-{ano}"
 
             if dia == '00':
-                # Buscar todos os registros do mês/ano
-                data_like = f"-{mes}-{ano}"  # ex: '-05-2025'
+                data_like = f"-{mes}-{ano}"
                 self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje LIKE ?", (f"%{data_like}",))
-                titulo = f"Fechamento de {mes}/{ano}"
+                nome_mes = datetime.strptime(mes, "%m").strftime('%B')
+                titulo = f"Fechamento de {nome_mes.capitalize()}/{ano}"
+                label_total = f"Total do mês {nome_mes.capitalize()}:"
+            elif data_selecionada == hoje:
+                self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
+                titulo = "Fechamento de Hoje"
+                label_total = "Total de Hoje:"
             else:
-                data_selecionada = f"{dia}-{mes}-{ano}"  # ex: '07-05-2025'
                 self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
                 titulo = f"Fechamento do Dia {data_selecionada}"
+                label_total = f"Total do Dia {data_selecionada}:"
 
             pedidos = self.cursor.fetchall()
 
@@ -774,41 +799,38 @@ class Caixa:
                 total_troco += troco
                 total_taxa += taxa
 
-                if pagamento in formas_pagamento:
-                    formas_pagamento[pagamento] += valor
-                else:
-                    formas_pagamento[pagamento] = valor
+                formas_pagamento[pagamento] = formas_pagamento.get(pagamento, 0) + valor
+                tamanhos_marmita[tamanho] = tamanhos_marmita.get(tamanho, 0) + 1
 
-                if tamanho in tamanhos_marmita:
-                    tamanhos_marmita[tamanho] += 1
-                else:
-                    tamanhos_marmita[tamanho] = 1
-
-            # Atualiza o título da janela com base na data selecionada
             self.fecharCaixa.title(titulo)
 
-            # Exibição na interface
-            tk.Label(self.fecharCaixa, text=f"Total Geral: R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
-            tk.Label(self.fecharCaixa, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
+            # Aqui a label foi atualizada com base na data:
+            tk.Label(self.frame_conteudo, text=f"{label_total} R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
+            tk.Label(self.frame_conteudo, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
 
             for metodo, total in formas_pagamento.items():
-                tk.Label(self.fecharCaixa, text=f"{metodo}: R$ {total:.2f}").pack(anchor='w', padx=10)
+                tk.Label(self.frame_conteudo, text=f"{metodo}: R$ {total:.2f}").pack(anchor='w', padx=10)
 
             mapa_tamanhos = {'13': 'Pequena', '15': 'Média', '18': 'Grande'}
-            tk.Label(self.fecharCaixa, text="\nTotal de Marmitas por Tamanho:", font=("Arial", 10, "underline")).pack()
+            tk.Label(self.frame_conteudo, text="\nTotal de Marmitas por Tamanho:", font=("Arial", 10, "underline")).pack()
 
             for tamanho, quantidade in tamanhos_marmita.items():
-                descricao = mapa_tamanhos.get(str(tamanho), str(tamanho))  
-                tk.Label(self.fecharCaixa, text=f"{descricao}: {quantidade}x").pack(anchor='w', padx=10)
+                descricao = mapa_tamanhos.get(str(tamanho), str(tamanho))
+                tk.Label(self.frame_conteudo, text=f"{descricao}: {quantidade}x").pack(anchor='w', padx=10)
 
-            tk.Label(self.fecharCaixa, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
-            tk.Label(self.fecharCaixa, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
+            tk.Label(self.frame_conteudo, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
+            tk.Label(self.frame_conteudo, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
 
-            tk.Button(self.fecharCaixa, text="Imprimir Fechamento", command=lambda: self.imprimir_fechamento_caixa(
+            tk.Button(self.frame_conteudo, text="Imprimir Fechamento", command=lambda: self.imprimir_fechamento_caixa(
                 total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo)).pack(pady=10)
 
 
+            
         tk.Button(self.fecharCaixa, text="Confirmar Data", command=obter_data).pack(pady=5)
+
+        # Frame para conter os relatórios e permitir limpeza
+        self.frame_conteudo = tk.Frame(self.fecharCaixa)
+        self.frame_conteudo.pack(fill='both', expand=True)
 
 
     def imprimir_fechamento_caixa(self, total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje):
@@ -850,6 +872,9 @@ class Caixa:
 
         except Exception as e:
             messagebox.showerror("Erro na impressão", f"Erro: {e}")
+
+
+
 
         
 

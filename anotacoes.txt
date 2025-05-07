@@ -1,16 +1,10 @@
 #Próximos passos para implementar:
 
-#funcao aonde eu selecione o periodo (mes ou ano) e ele imprime o fechamento de caixa daquele periodo
-
 #trabalhar no design da interface
 
-#ajustar radio buttons de criar pedido
+#alterar funcao de fechamento de caixa para printar total de hoje, total do dia ou total geral
 
-#adicionar not null na parte de criar pedido
-
-#Organizar os botoes
-
-#adicionar logo do bom apetite
+#ao apertar em confirmar a data atualizar a janela
 
 #criar um arquivo exe
 
