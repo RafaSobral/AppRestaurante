@@ -4,6 +4,14 @@
 
 #trabalhar no design da interface
 
+#ajustar radio buttons de criar pedido
+
+#adicionar not null na parte de criar pedido
+
+#Organizar os botoes
+
+#adicionar logo do bom apetite
+
 #criar um arquivo exe
 
 #Pesquisar como organizar melhor o codigo 
