@@ -11,6 +11,7 @@ cursor = conn.cursor()
 janela = tk.Tk()
 janela.title("Bom Apetite")
 janela.geometry("1200x500")
+janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
 app_Cliente = Cliente() 
 app_Prato = Prato()
@@ -129,7 +130,7 @@ def editar_pedido():
         messagebox.showwarning("Aviso","Selecione um pedido para editar")
         return
 
-    id, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, data_hoje = tree.item(selected[0], "values")
+    id, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, _ = tree.item(selected[0], "values")
 
     janela_editar = tk.Toplevel()
     janela_editar.title('Editar Pedido')
@@ -215,48 +216,49 @@ def deletar_pedido():
 frame_botoes = tk.Frame(janela)
 frame_botoes.pack(fill="x", padx=10, pady=10)
 
-botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente(1)", command=app_Cliente.abrir_cadastrarCliente)
-botao_cadastrarCliente.pack(side="left", padx=5)
-janela.bind("1", lambda e: botao_cadastrarCliente.invoke())
 
-botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerenciar Clientes(5)", command=app_Cliente.abrir_gerenciarClientes)
+botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerenciar Clientes(1)", command=app_Cliente.abrir_gerenciarClientes)
 botao_gerenciarClientes.pack(side="left", padx=5)
-janela.bind("5", lambda e: botao_gerenciarClientes.invoke())
+janela.bind("1", lambda e: botao_gerenciarClientes.invoke())
 
-botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos(2)", command=app_Prato.abrir_cadastrarPratos)
-botao_cadastrarPratos.pack(side="left", padx=5)
-janela.bind("2", lambda e: botao_cadastrarPratos.invoke())
-
-botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerenciar Pratos(6)", command=app_Prato.abrir_gerenciarPratos)
+botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerenciar Pratos(2)", command=app_Prato.abrir_gerenciarPratos)
 botao_gerenciarPratos.pack(side="left", padx=5)
-janela.bind("6", lambda e: botao_gerenciarPratos.invoke())
+janela.bind("2", lambda e: botao_gerenciarPratos.invoke())
 
-botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp(3)", command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
-botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
-janela.bind("3", lambda e: botao_cadastrarAcompanhamentos.invoke())
-
-botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerenciar Acomp(7)", command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
+botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerenciar Acomp(3)", command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
 botao_gerenciarAcompanhamentos.pack(side="left", padx=5)
-janela.bind("7", lambda e: botao_gerenciarAcompanhamentos.invoke())
+janela.bind("3", lambda e: botao_gerenciarAcompanhamentos.invoke())
 
 botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido(4)", command=app_Pedido.abrir_cadastrarPedido)
 botao_cadastrarPedidos.pack(side="left", padx=5)
 janela.bind("4", lambda e: botao_cadastrarPedidos.invoke())
 
+botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente(5)", command=app_Cliente.abrir_cadastrarCliente)
+botao_cadastrarCliente.pack(side="left", padx=5)
+janela.bind("5", lambda e: botao_cadastrarCliente.invoke())
+
+botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos(6)", command=app_Prato.abrir_cadastrarPratos)
+botao_cadastrarPratos.pack(side="left", padx=5)
+janela.bind("6", lambda e: botao_cadastrarPratos.invoke())
+
+botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp(7)", command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
+botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
+janela.bind("7", lambda e: botao_cadastrarAcompanhamentos.invoke())
+
 botao_atualizar = tk.Button(frame_botoes, text="Atualizar", command=carregar_pedidos)
-botao_atualizar.pack(side="left", pady=10)
+botao_atualizar.pack(side="right", pady=10)
 
 botao_editar = tk.Button(frame_botoes, text="Editar", command=editar_pedido)
-botao_editar.pack(side="left", padx=10, pady=10)
+botao_editar.pack(side="right", padx=5, pady=10)
 
 botao_deletar = tk.Button(frame_botoes, text="Deletar", command=deletar_pedido)
-botao_deletar.pack(side="right", padx=10, pady=10)
+botao_deletar.pack(side="right", padx=5, pady=10)
 
 btn_imprimir = tk.Button(frame_botoes, text="Re-imprimir", command=imprimir_pedido_daruma)
-btn_imprimir.pack(side="right", padx=20, pady=10)
+btn_imprimir.pack(side="right", padx=5, pady=10)
 
-botao_fecharCaixa = tk.Button(frame_botoes, text="Fechar Caixa(9)", command=app_Caixa.abrir_fecharCaixa)
-botao_fecharCaixa.pack(side="left", padx=5)
-janela.bind("9", lambda e: botao_fecharCaixa.invoke())
+botao_fecharCaixa = tk.Button(frame_botoes, text="Fechar Caixa(8)", command=app_Caixa.abrir_fecharCaixa)
+botao_fecharCaixa.pack(side="right", padx=5)
+janela.bind("8", lambda e: botao_fecharCaixa.invoke())
 
 janela.mainloop()

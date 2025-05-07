@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox,ttk
 from datetime import datetime
+from tkcalendar import DateEntry
 import sqlite3
 import serial
 
@@ -57,6 +58,7 @@ class Cliente:
     def abrir_cadastrarCliente(self):
         self.cadastrarCliente = tk.Toplevel()
         self.cadastrarCliente.title('Cadastrar Cliente')
+        self.cadastrarCliente.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         label_nome = tk.Label(self.cadastrarCliente, text="Nome:")
         label_nome.grid(row = 0, column = 0)
@@ -94,6 +96,7 @@ class Cliente:
         self.gerenciarClientes = tk.Toplevel()
         self.gerenciarClientes.title("Gerenciar Clientes")
         self.gerenciarClientes.geometry('300x500')
+        self.gerenciarClientes.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.tree = ttk.Treeview(self.gerenciarClientes, columns=("id","nome","endereco","telefone","referencia"), show="headings")
         self.tree.heading("id",text="ID")
@@ -130,6 +133,7 @@ class Cliente:
 
         janela_editar = tk.Toplevel()
         janela_editar.title("Editar Cliente")
+        janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         tk.Label(janela_editar, text="Nome").pack()
         nome_entry = tk.Entry(janela_editar)
@@ -232,6 +236,7 @@ class Prato:
         self.cadastrarPratos = tk.Toplevel()
         self.cadastrarPratos.title('Cadastrar Pratos')
         self.cadastrarPratos.geometry('190x100')
+        self.cadastrarPratos.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         label_nome = tk.Label(self.cadastrarPratos, text="Nome:")
         label_nome.grid(row=0,column=0)
@@ -259,6 +264,7 @@ class Prato:
         self.gerenciarPratos = tk.Toplevel()
         self.gerenciarPratos.title("Gerenciar Pratos:")
         self.gerenciarPratos.geometry('300x500')
+        self.gerenciarPratos.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.tree = ttk.Treeview(self.gerenciarPratos, columns=("id","nome","descricao"), show="headings")
         self.tree.heading("id",text="ID")
@@ -291,6 +297,7 @@ class Prato:
 
         janela_editar = tk.Toplevel()
         janela_editar.title("Editar prato")
+        janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         tk.Label(janela_editar, text="Nome").pack()
         nome_entry = tk.Entry(janela_editar)
@@ -330,8 +337,6 @@ class Prato:
             self.tree.delete(selected[0])
 
 
-        
-
 ################FIM da Classe PRATOS####################################
 
 ################Classe Acompanhamentos####################################
@@ -344,6 +349,8 @@ class Acompanhamento:
 
         self.acomp = None
         self.cadastrarAcomp = None
+        self.tree = None
+        self.gerenciarAcomp = None
 
     def criar_tabela(self):
         self.cursor.execute('''
@@ -375,6 +382,7 @@ class Acompanhamento:
         self.cadastrarAcomp = tk.Toplevel()
         self.cadastrarAcomp.title("Cadastrar Acompanhamentos:")
         self.cadastrarAcomp.geometry("250x80")
+        self.cadastrarAcomp.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         tk.Label(self.cadastrarAcomp, text="Acompanhamento: " ).grid(row=0, column=0)
         self.acomp = tk.Entry(self.cadastrarAcomp)
@@ -398,6 +406,7 @@ class Acompanhamento:
         self.gerenciarAcomp = tk.Toplevel()
         self.gerenciarAcomp.title('Gerenciar Acompanhamentos')
         self.gerenciarAcomp.geometry('300x500')
+        self.gerenciarAcomp.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.tree = ttk.Treeview(self.gerenciarAcomp, columns=("id","nome"), show="headings")
         self.tree.heading("id", text="ID")
@@ -429,6 +438,7 @@ class Acompanhamento:
 
         janela_editar = tk.Toplevel()
         janela_editar.title('Editar prato')
+        janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         tk.Label(janela_editar, text="Nome").pack()
         nome_entry = tk.Entry(janela_editar)
@@ -494,7 +504,7 @@ class Pedido:
             CREATE TABLE IF NOT EXISTS pedidos(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 pedido_id INTEGER,
-                nome_cliente TEXT,
+                nome_cliente TEXT NOT NULL,
                 prato TEXT,
                 acompanhamento1 TEXT,
                 acompanhamento2 TEXT,
@@ -512,7 +522,8 @@ class Pedido:
     def abrir_cadastrarPedido(self):
         self.cadastrarPedido = tk.Toplevel()
         self.cadastrarPedido.title('Cadastrar Pedido')
-        self.cadastrarPedido.geometry('600x310')
+        self.cadastrarPedido.geometry('500x310')
+        self.cadastrarPedido.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.cursor.execute("SELECT id, nome FROM clientes")
         clientes = self.cursor.fetchall()
@@ -559,16 +570,24 @@ class Pedido:
 
         tk.Label(self.cadastrarPedido, text="Tamanho:").grid(row=8, column=0)
         self.tamanho = tk.StringVar()
-        tamanhos =[("P","13"),("M","15"),("G","18")]
-        for i, (txt, val) in enumerate(tamanhos):
-            tk.Radiobutton(self.cadastrarPedido, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).grid(row=8, column=1 + i, sticky="w", padx=5)
 
-        tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0)
+        frame_tamanho = tk.Frame(self.cadastrarPedido)
+        frame_tamanho.grid(row=8, column=1, columnspan=3, sticky="w")  
+
+        tamanhos = [("P", "13"), ("M", "15"), ("G", "18")]
+        for txt, val in tamanhos:
+            tk.Radiobutton(frame_tamanho, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).pack(side="left", padx=12)       
+        
+        tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0, sticky="w")
         self.pagamento = tk.StringVar()
-        pagamentos =["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
-        for i, op in enumerate(pagamentos):
-            tk.Radiobutton(self.cadastrarPedido, text=op, variable=self.pagamento, value=op).grid(row=9, column=1 + i, sticky="w", padx=5)
 
+        frame_pagamento = tk.Frame(self.cadastrarPedido)
+        frame_pagamento.grid(row=9, column=1, columnspan=5, sticky="w")  
+
+        formas = ["Crédito", "Débito", "Dinheiro", "Pix", "Mumbuca"]
+        for forma in formas:
+            tk.Radiobutton(frame_pagamento, text=forma, variable=self.pagamento, value=forma).pack(side="left", padx=2)
+    
         tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=10, column=0)
         self.troco = tk.Entry(self.cadastrarPedido)
         self.troco.grid(row=10, column=1)
@@ -616,6 +635,10 @@ class Pedido:
             self.total.set("")
 
     def salvar_Pedido(self):
+        if not self.combo_cliente.get():
+            messagebox.showerror("Erro", "Selecione um cliente.")
+            return
+
         pedido_id = self.combo_cliente.get().split(" - ")[0]
         nome_cliente = self.combo_cliente.get().split(" - ")[1]
         prato = self.combo_prato.get()
@@ -695,7 +718,7 @@ Data: {pedido['data_hoje']}
 
 """
             porta.write(texto.encode('utf-8'))
-            porta.write(b'\n\n\n')  # Avança papel
+            porta.write(b'\n\n\n')  
             porta.close()
             messagebox.showinfo("Sucesso", "Pedido enviado para a impressora.")
         except Exception as e:
@@ -712,60 +735,80 @@ class Caixa:
         self.cursor = self.conexao.cursor()
 
     def abrir_fecharCaixa(self):
-        hoje = datetime.now().strftime("%d-%m-%Y")
-        self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (hoje,))
-        pedidos = self.cursor.fetchall()
-
-        total_geral = 0
-        total_troco = 0
-        total_taxa = 0
-        formas_pagamento = {}
-        tamanhos_marmita = {}
-
-        for pagamento, valor, tamanho, troco, taxa in pedidos:
-            total_geral += valor
-            total_troco += troco
-            total_taxa += taxa
-
-            if pagamento in formas_pagamento:
-                formas_pagamento[pagamento] += valor
-            else:
-                formas_pagamento[pagamento] = valor
-
-            if tamanho in tamanhos_marmita:
-                tamanhos_marmita[tamanho] += 1
-            else:
-                tamanhos_marmita[tamanho] = 1
-
         self.fecharCaixa = tk.Toplevel()
-        self.fecharCaixa.geometry("500x280")
-        self.fecharCaixa.title("Fechar o Caixa - " + hoje)
+        self.fecharCaixa.geometry("400x600")
+        self.fecharCaixa.title("Fechar o Caixa")
+        self.fecharCaixa.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(self.fecharCaixa, text=f"Total Geral do Dia: R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
-        tk.Label(self.fecharCaixa, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
+        tk.Label(self.fecharCaixa, text="Para gerar o relatorio mensal, Coloque o dia como 00.").pack(pady=6)
+        tk.Label(self.fecharCaixa, text="Selecionar Data:").pack(pady=5)
+        
+        date_entry = DateEntry(self.fecharCaixa, width=12, background='darkblue',
+                            foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
+        date_entry.pack(pady=10)
 
-        for metodo, total in formas_pagamento.items():
-            tk.Label(self.fecharCaixa, text=f"{metodo}: R$ {total:.2f}").pack(anchor='w', padx=10)
+        def obter_data():
+            data_str = date_entry.get()  # formato: dd/mm/yyyy
+            dia, mes, ano = data_str.split('/')
 
-        mapa_tamanhos = {
-            '13': 'Pequena',
-            '15': 'Media',
-            '18': 'Grande',
-        }
+            if dia == '00':
+                # Buscar todos os registros do mês/ano
+                data_like = f"-{mes}-{ano}"  # ex: '-05-2025'
+                self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje LIKE ?", (f"%{data_like}",))
+                titulo = f"Fechamento de {mes}/{ano}"
+            else:
+                data_selecionada = f"{dia}-{mes}-{ano}"  # ex: '07-05-2025'
+                self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
+                titulo = f"Fechamento do Dia {data_selecionada}"
 
-        tk.Label(self.fecharCaixa, text="\nTotal de Marmitas por Tamanho:", font=("Arial", 10, "underline")).pack()
+            pedidos = self.cursor.fetchall()
 
-        for tamanho, quantidade in tamanhos_marmita.items():
-            descricao = mapa_tamanhos.get(str(tamanho), str(tamanho))  
-            tk.Label(self.fecharCaixa, text=f"{descricao}: {quantidade}x").pack(anchor='w', padx=10)
+            total_geral = 0
+            total_troco = 0
+            total_taxa = 0
+            formas_pagamento = {}
+            tamanhos_marmita = {}
+
+            for pagamento, valor, tamanho, troco, taxa in pedidos:
+                total_geral += valor
+                total_troco += troco
+                total_taxa += taxa
+
+                if pagamento in formas_pagamento:
+                    formas_pagamento[pagamento] += valor
+                else:
+                    formas_pagamento[pagamento] = valor
+
+                if tamanho in tamanhos_marmita:
+                    tamanhos_marmita[tamanho] += 1
+                else:
+                    tamanhos_marmita[tamanho] = 1
+
+            # Atualiza o título da janela com base na data selecionada
+            self.fecharCaixa.title(titulo)
+
+            # Exibição na interface
+            tk.Label(self.fecharCaixa, text=f"Total Geral: R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
+            tk.Label(self.fecharCaixa, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
+
+            for metodo, total in formas_pagamento.items():
+                tk.Label(self.fecharCaixa, text=f"{metodo}: R$ {total:.2f}").pack(anchor='w', padx=10)
+
+            mapa_tamanhos = {'13': 'Pequena', '15': 'Média', '18': 'Grande'}
+            tk.Label(self.fecharCaixa, text="\nTotal de Marmitas por Tamanho:", font=("Arial", 10, "underline")).pack()
+
+            for tamanho, quantidade in tamanhos_marmita.items():
+                descricao = mapa_tamanhos.get(str(tamanho), str(tamanho))  
+                tk.Label(self.fecharCaixa, text=f"{descricao}: {quantidade}x").pack(anchor='w', padx=10)
+
+            tk.Label(self.fecharCaixa, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
+            tk.Label(self.fecharCaixa, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
+
+            tk.Button(self.fecharCaixa, text="Imprimir Fechamento", command=lambda: self.imprimir_fechamento_caixa(
+                total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo)).pack(pady=10)
 
 
-        tk.Label(self.fecharCaixa, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
-        tk.Label(self.fecharCaixa, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
-
-        btn_imprimir_caixa = tk.Button(self.fecharCaixa, text="Imprimir Fechamento", command=lambda: self.imprimir_fechamento_caixa(
-        total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje))
-        btn_imprimir_caixa.pack(pady=10)
+        tk.Button(self.fecharCaixa, text="Confirmar Data", command=obter_data).pack(pady=5)
 
 
     def imprimir_fechamento_caixa(self, total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje):
