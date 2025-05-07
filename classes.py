@@ -1,11 +1,10 @@
 import tkinter as tk
-from tkinter import messagebox,ttk
-from datetime import datetime
-from tkcalendar import DateEntry
 import sqlite3
 import serial
 import locale
+from tkinter import messagebox,ttk
 from datetime import datetime
+from tkcalendar import DateEntry
 
 
 ################Classe Cliente################################
@@ -21,6 +20,8 @@ class Cliente:
         self.telefone = None
         self.referencia = None
         self.gerenciarClientes = None
+        self.cadastrarCliente = None
+        self.tree = None
 
 
 
@@ -59,6 +60,7 @@ class Cliente:
     
     def abrir_cadastrarCliente(self):
         self.cadastrarCliente = tk.Toplevel()
+        self.cadastrarCliente.focus_force()
         self.cadastrarCliente.title('Cadastrar Cliente')
         self.cadastrarCliente.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
@@ -66,6 +68,7 @@ class Cliente:
         label_nome.grid(row = 0, column = 0)
         self.nome = tk.Entry(self.cadastrarCliente)
         self.nome.grid(row = 0, column = 1)
+        self.nome.focus_set()
 
         label_endereco = tk.Label(self.cadastrarCliente, text="Endereco:")
         label_endereco.grid(row = 1, column = 0)
@@ -82,21 +85,22 @@ class Cliente:
         self.referencia = tk.Entry(self.cadastrarCliente)
         self.referencia.grid(row=3, column=1)
 
-        botao_salvar = tk.Button(self.cadastrarCliente, text="Salvar (1)", command=self.salvar_cliente)
+        botao_salvar = tk.Button(self.cadastrarCliente, text="Salvar [Return]", command=self.salvar_cliente)
         botao_salvar.grid(row=6, column=0)
         def acionar_salvar(event=None):
             botao_salvar.invoke()
-        self.cadastrarCliente.bind("1", acionar_salvar)
+        self.cadastrarCliente.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarCliente, text="Fechar (2)", command=self.cadastrarCliente.destroy)
+        botao_voltar = tk.Button(self.cadastrarCliente, text="Fechar [Esc]", command=self.cadastrarCliente.destroy)
         botao_voltar.grid(row = 7, column = 0)
         def acionar_voltar(event=None):
             botao_voltar.invoke()
-        self.cadastrarCliente.bind("2", acionar_voltar)
+        self.cadastrarCliente.bind("<Escape>", acionar_voltar)
 
     def abrir_gerenciarClientes(self):
         self.gerenciarClientes = tk.Toplevel()
         self.gerenciarClientes.title("Gerenciar Clientes")
+        self.gerenciarClientes.focus_force()
         self.gerenciarClientes.geometry('300x500')
         self.gerenciarClientes.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
@@ -119,11 +123,17 @@ class Cliente:
         for row in self.cursor.fetchall():
             self.tree.insert("", "end", values=row)
 
-        botao_editar = tk.Button(self.gerenciarClientes, text="Editar", command=self.editar_cliente)
+        botao_editar = tk.Button(self.gerenciarClientes, text="Editar [E]", command=self.editar_cliente)
         botao_editar.pack(side="left", padx=10, pady=10)
+        self.gerenciarClientes.bind("<Key-e>", lambda e: botao_editar.invoke())
 
-        botao_deletar = tk.Button(self.gerenciarClientes, text="Deletar", command=self.deletar_cliente)
+        botao_deletar = tk.Button(self.gerenciarClientes, text="Deletar [DEL]", command=self.deletar_cliente)
         botao_deletar.pack(side="left", padx=10, pady=10)
+        self.gerenciarClientes.bind("<Delete>", lambda e: botao_deletar.invoke())
+
+        botao_sair = tk.Button(self.gerenciarClientes, text="Sair [Esc]", command=self.gerenciarClientes.destroy)
+        botao_sair.pack(side="left", padx=10, pady=10)
+        self.gerenciarClientes.bind("<Escape>", lambda e: botao_sair.invoke())
 
     def editar_cliente(self):
         selected = self.tree.selection()
@@ -134,6 +144,7 @@ class Cliente:
         cliente_id, nome_antigo, endereco_antigo, telefone_antigo, referencia_antiga = self.tree.item(selected[0], "values")
 
         janela_editar = tk.Toplevel()
+        janela_editar.focus_force()
         janela_editar.title("Editar Cliente")
         janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
@@ -169,7 +180,11 @@ class Cliente:
             self.gerenciarClientes.destroy()
             self.abrir_gerenciarClientes()
 
-        tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+        botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
+        botao_salvar.pack(pady=10)
+        def acionar_salvar(event=None):
+            botao_salvar.invoke()
+        janela_editar.bind("<Return>", acionar_salvar)
 
 
     def deletar_cliente(self):
@@ -205,6 +220,8 @@ class Prato:
         self.nome = None 
         self.descricao = None 
         self.gerenciarPratos = None
+        self.cadastrarPratos = None
+        self.tree = None
 
     def criar_tabela(self):
         self.cursor.execute('''
@@ -237,12 +254,14 @@ class Prato:
     def abrir_cadastrarPratos(self):
         self.cadastrarPratos = tk.Toplevel()
         self.cadastrarPratos.title('Cadastrar Pratos')
+        self.cadastrarPratos.focus_force()
         self.cadastrarPratos.geometry('190x100')
         self.cadastrarPratos.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         label_nome = tk.Label(self.cadastrarPratos, text="Nome:")
         label_nome.grid(row=0,column=0)
         self.nome = tk.Entry(self.cadastrarPratos)
+        self.nome.focus_set()
         self.nome.grid(row=0,column=1)
         
         label_descricao = tk.Label(self.cadastrarPratos, text="Descricao:")
@@ -250,21 +269,22 @@ class Prato:
         self.descricao = tk.Entry(self.cadastrarPratos)
         self.descricao.grid(row=1,column=1)
 
-        botao_salvar = tk.Button(self.cadastrarPratos, text="Salvar(1)", command=self.salvar_prato)
+        botao_salvar = tk.Button(self.cadastrarPratos, text="Salvar [Enter]", command=self.salvar_prato)
         botao_salvar.grid(row=6, column=0)
         def acionar_salvar(event=None):
             botao_salvar.invoke()
-        self.cadastrarPratos.bind("1", acionar_salvar)
+        self.cadastrarPratos.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPratos, text="Fechar(2)", command=self.cadastrarPratos.destroy)
+        botao_voltar = tk.Button(self.cadastrarPratos, text="Fechar [Esc]", command=self.cadastrarPratos.destroy)
         botao_voltar.grid(row=7, column=0)
         def acionar_voltar(event=None):
             botao_voltar.invoke()
-        self.cadastrarPratos.bind("2", acionar_voltar)
+        self.cadastrarPratos.bind("<Escape>", acionar_voltar)
 
     def abrir_gerenciarPratos(self):
         self.gerenciarPratos = tk.Toplevel()
         self.gerenciarPratos.title("Gerenciar Pratos:")
+        self.gerenciarPratos.focus_force()
         self.gerenciarPratos.geometry('300x500')
         self.gerenciarPratos.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
@@ -283,11 +303,17 @@ class Prato:
         for row in self.cursor.fetchall():
             self.tree.insert("", "end", values=row)
 
-        botao_editar = tk.Button(self.gerenciarPratos, text="Editar", command=self.editar_prato)
+        botao_editar = tk.Button(self.gerenciarPratos, text="Editar [E]", command=self.editar_prato)
         botao_editar.pack(side="left", padx=10, pady=10)
+        self.gerenciarPratos.bind("<Key-e>", lambda e: botao_editar.invoke())
 
-        botao_deletar = tk.Button(self.gerenciarPratos, text="Deletar", command=self.deletar_prato)
-        botao_deletar.pack(side="right", padx=10, pady=10)
+        botao_deletar = tk.Button(self.gerenciarPratos, text="Deletar [DEL]", command=self.deletar_prato)
+        botao_deletar.pack(side="left", padx=10, pady=10)
+        self.gerenciarPratos.bind("<Delete>", lambda e: botao_deletar.invoke())
+
+        botao_sair = tk.Button(self.gerenciarPratos, text="Sair [Esc]", command=self.gerenciarPratos.destroy)
+        botao_sair.pack(side="left", padx=10, pady=10)
+        self.gerenciarPratos.bind("<Escape>", lambda e: botao_sair.invoke())
 
     def editar_prato(self):
         selected = self.tree.selection()
@@ -298,6 +324,7 @@ class Prato:
         prato_id, nome_antigo, descricao_antiga = self.tree.item(selected[0], "values")
 
         janela_editar = tk.Toplevel()
+        janela_editar.focus_force()
         janela_editar.title("Editar prato")
         janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
@@ -321,7 +348,11 @@ class Prato:
             self.gerenciarPratos.destroy()
             self.abrir_gerenciarPratos()
 
-        tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+        botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
+        botao_salvar.pack(pady=10)
+        def acionar_salvar(event=None):
+            botao_salvar.invoke()
+        janela_editar.bind("<Return>", acionar_salvar)
 
     def deletar_prato(self):
         selected = self.tree.selection()
@@ -382,31 +413,34 @@ class Acompanhamento:
 
     def abrir_cadastrarAcompanhamentos(self):
         self.cadastrarAcomp = tk.Toplevel()
+        self.cadastrarAcomp.focus_force()
         self.cadastrarAcomp.title("Cadastrar Acompanhamentos:")
         self.cadastrarAcomp.geometry("250x80")
         self.cadastrarAcomp.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         tk.Label(self.cadastrarAcomp, text="Acompanhamento: " ).grid(row=0, column=0)
         self.acomp = tk.Entry(self.cadastrarAcomp)
+        self.acomp.focus_set()
         self.acomp.grid(row=0, column=1)
 
-        botao_Salvar = tk.Button(self.cadastrarAcomp, text="Salvar(1)", command=self.salvar_Acompanhamento)
+        botao_Salvar = tk.Button(self.cadastrarAcomp, text="Salvar [Enter]", command=self.salvar_Acompanhamento)
         botao_Salvar.grid(row=1, column=0)
         def acionar_salvar(event=None):
             botao_Salvar.invoke()
-        self.cadastrarAcomp.bind("1", acionar_salvar)
+        self.cadastrarAcomp.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarAcomp, text="Fechar(2)", command=self.cadastrarAcomp.destroy)
+        botao_voltar = tk.Button(self.cadastrarAcomp, text="Fechar [Escape]", command=self.cadastrarAcomp.destroy)
         botao_voltar.grid(row = 2, column = 0)
         def acionar_voltar(event=None):
             botao_voltar.invoke()
-        self.cadastrarAcomp.bind("2", acionar_voltar)
+        self.cadastrarAcomp.bind("<Escape>", acionar_voltar)
         
 
 
     def abrir_gerenciarAcompanhamentos(self):
         self.gerenciarAcomp = tk.Toplevel()
         self.gerenciarAcomp.title('Gerenciar Acompanhamentos')
+        self.gerenciarAcomp.focus_force()
         self.gerenciarAcomp.geometry('300x500')
         self.gerenciarAcomp.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
@@ -424,11 +458,18 @@ class Acompanhamento:
         for row in self.cursor.fetchall():
             self.tree.insert("", "end", values=row)
 
-        botao_editar = tk.Button(self.gerenciarAcomp, text="Editar", command=self.editar_acompanhamento)
+        botao_editar = tk.Button(self.gerenciarAcomp, text="Editar [E]", command=self.editar_acompanhamento)
         botao_editar.pack(side="left", padx=10, pady=10)
+        self.gerenciarAcomp.bind("<Key-e>", lambda e: botao_editar.invoke())
 
-        botao_deletar = tk.Button(self.gerenciarAcomp, text="Deletar", command=self.deletar_acompanhamento)
-        botao_deletar.pack(side="right", padx=10, pady=10)
+        botao_deletar = tk.Button(self.gerenciarAcomp, text="Deletar [DEL]", command=self.deletar_acompanhamento)
+        botao_deletar.pack(side="left", padx=10, pady=10)
+        self.gerenciarAcomp.bind("<Delete>", lambda e: botao_deletar.invoke())
+
+        botao_sair = tk.Button(self.gerenciarAcomp, text="Sair [Esc]", command=self.gerenciarAcomp.destroy)
+        botao_sair.pack(side="left", padx=10, pady=10)
+        self.gerenciarAcomp.bind("<Escape>", lambda e: botao_sair.invoke())
+
 
     def editar_acompanhamento(self):
         selected = self.tree.selection()
@@ -439,6 +480,7 @@ class Acompanhamento:
         acomp_id, nome_antigo = self.tree.item(selected[0], "values")
 
         janela_editar = tk.Toplevel()
+        janela_editar.focus_force()
         janela_editar.title('Editar prato')
         janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
@@ -456,7 +498,11 @@ class Acompanhamento:
             self.gerenciarAcomp.destroy()
             self.abrir_gerenciarAcompanhamentos()
 
-        tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+        botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
+        botao_salvar.pack(pady=10)
+        def acionar_salvar(event=None):
+            botao_salvar.invoke()
+        janela_editar.bind("<Return>", acionar_salvar)
 
     def deletar_acompanhamento(self):
         selected = self.tree.selection()
@@ -523,6 +569,7 @@ class Pedido:
 
     def abrir_cadastrarPedido(self):
         self.cadastrarPedido = tk.Toplevel()
+        self.cadastrarPedido.focus_force()
         self.cadastrarPedido.title('Cadastrar Pedido')
         self.cadastrarPedido.geometry('500x310')
         self.cadastrarPedido.iconphoto(False, tk.PhotoImage(file='logo.png'))
@@ -603,17 +650,17 @@ class Pedido:
         self.total = tk.StringVar()
         tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=12, column=1)
 
-        botao_salvar = tk.Button(self.cadastrarPedido, text="Salvar Pedido(1)", command=self.salvar_Pedido)
+        botao_salvar = tk.Button(self.cadastrarPedido, text="Salvar [Enter]", command=self.salvar_Pedido)
         botao_salvar.grid(row=13, column=0)
         def acionar_salvar(event=None):
             botao_salvar.invoke()
-        self.cadastrarPedido.bind("1", acionar_salvar)
+        self.cadastrarPedido.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPedido, text="Fechar (2)", command=self.cadastrarPedido.destroy)
+        botao_voltar = tk.Button(self.cadastrarPedido, text="Fechar [Esc]", command=self.cadastrarPedido.destroy)
         botao_voltar.grid(row = 13, column = 1)
         def acionar_voltar(event=None):
             botao_voltar.invoke()
-        self.cadastrarPedido.bind("2", acionar_voltar)
+        self.cadastrarPedido.bind("<Escape>", acionar_voltar)
 
     def preencher_dados_cliente(self, event):
         cliente_id = self.combo_cliente.get().split(" - ")[0]
@@ -735,6 +782,7 @@ class Caixa:
         self.fecharCaixa = None
         self.conexao = sqlite3.connect('bomapetite.db')
         self.cursor = self.conexao.cursor()
+        self.frame_conteudo = None
 
 
 class Caixa:
@@ -745,11 +793,12 @@ class Caixa:
 
     def abrir_fecharCaixa(self):
         self.fecharCaixa = tk.Toplevel()
+        self.fecharCaixa.focus_force()
         self.fecharCaixa.geometry("400x600")
         self.fecharCaixa.title("Fechar o Caixa")
         self.fecharCaixa.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(self.fecharCaixa, text="Para gerar o relatorio mensal, Coloque o dia como 00.").pack(pady=6)
+        tk.Label(self.fecharCaixa, text="Para gerar o relatorio mensal, Selecione o mes e coloque o dia como 00.").pack(pady=6)
         tk.Label(self.fecharCaixa, text="Selecionar Data:").pack(pady=5)
 
         date_entry = DateEntry(self.fecharCaixa, width=12, background='darkblue',
@@ -762,7 +811,6 @@ class Caixa:
             except:
                 locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')  # Windows fallback
 
-            # Limpa os widgets antigos
             for widget in self.frame_conteudo.winfo_children():
                 widget.destroy()
 
@@ -771,12 +819,12 @@ class Caixa:
             hoje = datetime.now().strftime("%d-%m-%Y")
             data_selecionada = f"{dia}-{mes}-{ano}"
 
-            if dia == '00':
+            if dia == '00' or dia == '0':
                 data_like = f"-{mes}-{ano}"
                 self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje LIKE ?", (f"%{data_like}",))
                 nome_mes = datetime.strptime(mes, "%m").strftime('%B')
                 titulo = f"Fechamento de {nome_mes.capitalize()}/{ano}"
-                label_total = f"Total do mês {nome_mes.capitalize()}:"
+                label_total = f"Total do mês de {nome_mes.capitalize()}:"
             elif data_selecionada == hoje:
                 self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
                 titulo = "Fechamento de Hoje"
@@ -804,7 +852,6 @@ class Caixa:
 
             self.fecharCaixa.title(titulo)
 
-            # Aqui a label foi atualizada com base na data:
             tk.Label(self.frame_conteudo, text=f"{label_total} R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
             tk.Label(self.frame_conteudo, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
 
@@ -821,20 +868,32 @@ class Caixa:
             tk.Label(self.frame_conteudo, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
             tk.Label(self.frame_conteudo, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
 
-            tk.Button(self.frame_conteudo, text="Imprimir Fechamento", command=lambda: self.imprimir_fechamento_caixa(
-                total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo)).pack(pady=10)
-
+            botao_imprimir = tk.Button(self.frame_conteudo, text="Imprimir Fechamento [i]", command=lambda: self.imprimir_fechamento_caixa(
+                total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo))
+            botao_imprimir.pack(pady=10)
+            def acionar_imprimir(event=None):
+                botao_imprimir.invoke()
+            self.fecharCaixa.bind("<Key-i>", acionar_imprimir)
 
             
-        tk.Button(self.fecharCaixa, text="Confirmar Data", command=obter_data).pack(pady=5)
+        botao_confirmar = tk.Button(self.fecharCaixa, text="Confirmar Data [Enter]", command=obter_data)
+        botao_confirmar.pack(pady=5)
+        def acionar_confirmar(event=None):
+            botao_confirmar.invoke()
+        self.fecharCaixa.bind("<Return>", acionar_confirmar)
 
-        # Frame para conter os relatórios e permitir limpeza
+        botao_sair = tk.Button(self.fecharCaixa, text="Sair [Esc]", command=self.fecharCaixa.destroy)
+        botao_sair.pack(pady=10)
+        def acionar_sair(event=None):
+            botao_sair.invoke()
+        self.fecharCaixa.bind("<Escape>", acionar_sair)
+        
         self.frame_conteudo = tk.Frame(self.fecharCaixa)
         self.frame_conteudo.pack(fill='both', expand=True)
 
 
     def imprimir_fechamento_caixa(self, total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje):
-        mapa_tamanhos = {'13': 'P', '12': 'M', '11': 'G'}  # ajuste conforme necessário
+        mapa_tamanhos = {'13': 'P', '12': 'M', '11': 'G'}  
 
         try:
             porta = serial.Serial('COM3', baudrate=9600, timeout=1)
@@ -866,7 +925,7 @@ class Caixa:
     """
 
             porta.write(texto.encode('utf-8'))
-            porta.write(b'\n\n\n')  # Avança papel
+            porta.write(b'\n\n\n')  
             porta.close()
             messagebox.showinfo("Sucesso", "Fechamento de caixa enviado para a impressora.")
 

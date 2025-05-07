@@ -118,7 +118,7 @@ Data: {pedido['data_hoje']}
 
 """
         porta.write(texto.encode('utf-8'))
-        porta.write(b'\n\n\n')  # Avança papel
+        porta.write(b'\n\n\n') 
         porta.close()
         messagebox.showinfo("Sucesso", "Pedido enviado para a impressora.")
     except Exception as e:
@@ -133,6 +133,7 @@ def editar_pedido():
     id, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, _ = tree.item(selected[0], "values")
 
     janela_editar = tk.Toplevel()
+    janela_editar.focus_force()
     janela_editar.title('Editar Pedido')
 
     tk.Label(janela_editar, text="Prato").pack()
@@ -196,7 +197,11 @@ def editar_pedido():
         messagebox.showinfo("Sucesso","Pedido atualizado com sucesso")
         janela_editar.destroy()
 
-    tk.Button(janela_editar, text="Salvar", command=salvar_edicao).pack(pady=10)
+    botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
+    botao_salvar.pack(pady=10)
+    def acionar_salvar(event=None):
+        botao_salvar.invoke()
+    janela_editar.bind("<Return>", acionar_salvar)
 
 def deletar_pedido():
     selected = tree.selection()
@@ -217,47 +222,59 @@ frame_botoes = tk.Frame(janela)
 frame_botoes.pack(fill="x", padx=10, pady=10)
 
 
-botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerenciar Clientes(1)", command=app_Cliente.abrir_gerenciarClientes)
+botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerir Clientes [1]", command=app_Cliente.abrir_gerenciarClientes)
 botao_gerenciarClientes.pack(side="left", padx=5)
 janela.bind("1", lambda e: botao_gerenciarClientes.invoke())
 
-botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerenciar Pratos(2)", command=app_Prato.abrir_gerenciarPratos)
+botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerir Pratos [2]", command=app_Prato.abrir_gerenciarPratos)
 botao_gerenciarPratos.pack(side="left", padx=5)
 janela.bind("2", lambda e: botao_gerenciarPratos.invoke())
 
-botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerenciar Acomp(3)", command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
+botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerir Acomp [3]", command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
 botao_gerenciarAcompanhamentos.pack(side="left", padx=5)
 janela.bind("3", lambda e: botao_gerenciarAcompanhamentos.invoke())
 
-botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido(4)", command=app_Pedido.abrir_cadastrarPedido)
+botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido [4]", command=app_Pedido.abrir_cadastrarPedido)
 botao_cadastrarPedidos.pack(side="left", padx=5)
 janela.bind("4", lambda e: botao_cadastrarPedidos.invoke())
 
-botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente(5)", command=app_Cliente.abrir_cadastrarCliente)
+botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente [5]", command=app_Cliente.abrir_cadastrarCliente)
 botao_cadastrarCliente.pack(side="left", padx=5)
 janela.bind("5", lambda e: botao_cadastrarCliente.invoke())
 
-botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos(6)", command=app_Prato.abrir_cadastrarPratos)
+botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos [6]", command=app_Prato.abrir_cadastrarPratos)
 botao_cadastrarPratos.pack(side="left", padx=5)
 janela.bind("6", lambda e: botao_cadastrarPratos.invoke())
 
-botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp(7)", command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
+botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp [7]", command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
 botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
 janela.bind("7", lambda e: botao_cadastrarAcompanhamentos.invoke())
 
-botao_atualizar = tk.Button(frame_botoes, text="Atualizar", command=carregar_pedidos)
+botao_atualizar = tk.Button(frame_botoes, text="Atualizar [F5]", command=carregar_pedidos)
 botao_atualizar.pack(side="right", pady=10)
+def acionar_atualizar(event=None):
+        botao_atualizar.invoke()
+janela.bind("<F5>", acionar_atualizar)
 
-botao_editar = tk.Button(frame_botoes, text="Editar", command=editar_pedido)
+botao_editar = tk.Button(frame_botoes, text="Editar [E]", command=editar_pedido)
 botao_editar.pack(side="right", padx=5, pady=10)
+def acionar_editar(event=None):
+    botao_editar.invoke()
+janela.bind("<Key-e>", acionar_editar)
 
-botao_deletar = tk.Button(frame_botoes, text="Deletar", command=deletar_pedido)
+botao_deletar = tk.Button(frame_botoes, text="Deletar [Del]", command=deletar_pedido)
 botao_deletar.pack(side="right", padx=5, pady=10)
+def acionar_deletar(event=None):
+    botao_deletar.invoke()
+janela.bind("<Delete>", acionar_deletar)
 
-btn_imprimir = tk.Button(frame_botoes, text="Re-imprimir", command=imprimir_pedido_daruma)
+btn_imprimir = tk.Button(frame_botoes, text="Re-imprimir [i]", command=imprimir_pedido_daruma)
 btn_imprimir.pack(side="right", padx=5, pady=10)
+def acionar_imprimir(event=None):
+    btn_imprimir.invoke()
+janela.bind("<Key-i>", acionar_imprimir)
 
-botao_fecharCaixa = tk.Button(frame_botoes, text="Fechar Caixa(8)", command=app_Caixa.abrir_fecharCaixa)
+botao_fecharCaixa = tk.Button(frame_botoes, text="Fechar Caixa [8]", command=app_Caixa.abrir_fecharCaixa)
 botao_fecharCaixa.pack(side="right", padx=5)
 janela.bind("8", lambda e: botao_fecharCaixa.invoke())
 

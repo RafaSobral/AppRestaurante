@@ -1,12 +1,8 @@
-#Próximos passos para implementar:
+
 
 #trabalhar no design da interface
 
-#alterar funcao de fechamento de caixa para printar total de hoje, total do dia ou total geral
-
-#ao apertar em confirmar a data atualizar a janela
-
-#criar um arquivo exe
+#fazer a documentacao
 
 #Pesquisar como organizar melhor o codigo 
 
