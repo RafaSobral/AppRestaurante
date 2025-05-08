@@ -20,7 +20,17 @@ app_Acompanhamentos = Acompanhamento()
 app_Caixa = Caixa()
 
 
-tree = ttk.Treeview(janela, columns=("N. Pedido:","Nome Cliente:","Prato:","Acompanhamento 1:","Acompanhamento 2:","Observacao:","Tamanho:","Pagamento:","Troco:","Taxa:","Total:","Data:"), show="headings")
+# Treeview com ID oculto como primeira coluna
+tree = ttk.Treeview(
+    janela,
+    columns=("id", "N. Pedido:", "Nome Cliente:", "Prato:", "Acompanhamento 1:", "Acompanhamento 2:",
+             "Observacao:", "Tamanho:", "Pagamento:", "Troco:", "Taxa:", "Total:", "Data:"),
+    show="headings"
+)
+
+tree.heading("id", text="id")
+tree.column("id", width=0, stretch=False)  # Oculta o ID
+
 tree.heading("N. Pedido:", text="N. Pedido:")
 tree.column("N. Pedido:", width=38)
 
@@ -58,17 +68,88 @@ tree.heading("Data:", text="Data:")
 tree.column("Data:", width=60)
 
 tree.pack(fill="both", expand=True, padx=10, pady=10)
-cursor.execute("SELECT id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
-for row in cursor.fetchall():
-    tree.insert("", "end", values=row)
 
+# Carrega os pedidos do banco
 def carregar_pedidos():
     for i in tree.get_children():
         tree.delete(i)
-    cursor.execute("SELECT pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
+    cursor.execute("SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
     for row in cursor.fetchall():
         tree.insert("", "end", values=row)
 
+carregar_pedidos()
+
+# Função deletar pedido
+def deletar_pedido():
+    selected = tree.selection()
+    if not selected:
+        messagebox.showwarning("Aviso", "Selecione um pedido para deletar")
+        return
+
+    id_real = tree.item(selected[0], "values")[0]
+
+    confirm = messagebox.askyesno("Confirmar", "Tem certeza que deseja excluir esse Pedido?")
+    if confirm:
+        cursor.execute("DELETE FROM pedidos WHERE id=?", (id_real,))
+        conn.commit()
+        messagebox.showinfo("Sucesso", "Pedido deletado com sucesso")
+        tree.delete(selected[0])
+
+# Função editar pedido
+def editar_pedido():
+    selected = tree.selection()
+    if not selected:
+        messagebox.showwarning("Aviso", "Selecione um pedido para editar")
+        return
+
+    valores = tree.item(selected[0], "values")
+    id_real = valores[0]
+
+    _, _, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, _ = valores
+
+    janela_editar = tk.Toplevel()
+    janela_editar.title('Editar Pedido')
+    janela_editar.focus_force()
+
+    campos = {
+        "Prato": prato_antigo,
+        "Acomp1": acomp1_antigo,
+        "Acomp2": acomp2_antigo,
+        "Observacao": observacao_antiga,
+        "Tamanho": tamanho_antigo,
+        "Pagamento": pagamento_antigo,
+        "Troco": troco_antigo,
+        "Taxa": taxa_antiga,
+        "Total": total_antigo
+    }
+
+    entradas = {}
+
+    for label, valor in campos.items():
+        tk.Label(janela_editar, text=label).pack()
+        entrada = tk.Entry(janela_editar)
+        entrada.insert(0, valor)
+        entrada.pack()
+        entradas[label] = entrada
+
+    def salvar_edicao():
+        novos_valores = [entradas[campo].get() for campo in campos]
+
+        cursor.execute("""
+            UPDATE pedidos SET prato=?, acompanhamento1=?, acompanhamento2=?, observacao=?,
+            tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?
+        """, (*novos_valores, id_real))
+        conn.commit()
+        messagebox.showinfo("Sucesso", "Pedido atualizado com sucesso")
+        janela_editar.destroy()
+        carregar_pedidos()
+
+    botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
+    botao_salvar.pack(pady=10)
+
+    janela_editar.bind("<Return>", lambda event=None: botao_salvar.invoke())
+
+# Função para imprimir pedido (Daruma)
 def imprimir_pedido_daruma():
     selected = tree.selection()
     if not selected:
@@ -76,23 +157,23 @@ def imprimir_pedido_daruma():
         return
 
     valores = tree.item(selected[0], "values")
-    if len(valores) < 12:
+    if len(valores) < 13:
         messagebox.showerror("Erro", "Dados do pedido incompletos.")
         return
 
     pedido = {
-        "pedido_id": valores[0],
-        "nome_cliente": valores[1],
-        "prato": valores[2],
-        "acomp1": valores[3],
-        "acomp2": valores[4],
-        "observacao": valores[5],
-        "tamanho": valores[6],
-        "pagamento": valores[7],
-        "troco": valores[8],
-        "taxa": valores[9],
-        "total": valores[10],
-        "data_hoje": valores[11]
+        "pedido_id": valores[1],
+        "nome_cliente": valores[2],
+        "prato": valores[3],
+        "acomp1": valores[4],
+        "acomp2": valores[5],
+        "observacao": valores[6],
+        "tamanho": valores[7],
+        "pagamento": valores[8],
+        "troco": valores[9],
+        "taxa": valores[10],
+        "total": valores[11],
+        "data_hoje": valores[12]
     }
 
     try:
@@ -112,111 +193,15 @@ Troco: R$ {pedido['troco']}
 Taxa: R$ {pedido['taxa']}
 Total: R$ {pedido['total']}
 Data: {pedido['data_hoje']}
-
-
 ------------------------
-
 """
         porta.write(texto.encode('utf-8'))
-        porta.write(b'\n\n\n') 
+        porta.write(b'\n\n\n')
         porta.close()
         messagebox.showinfo("Sucesso", "Pedido enviado para a impressora.")
     except Exception as e:
         messagebox.showerror("Erro na impressão", f"Erro: {e}")
 
-def editar_pedido():
-    selected = tree.selection()
-    if not selected:
-        messagebox.showwarning("Aviso","Selecione um pedido para editar")
-        return
-
-    id, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, _ = tree.item(selected[0], "values")
-
-    janela_editar = tk.Toplevel()
-    janela_editar.focus_force()
-    janela_editar.title('Editar Pedido')
-
-    tk.Label(janela_editar, text="Prato").pack()
-    prato_entry = tk.Entry(janela_editar)
-    prato_entry.insert(0, prato_antigo)
-    prato_entry.pack()
-
-    tk.Label(janela_editar, text="Acomp1").pack()
-    acomp1_entry = tk.Entry(janela_editar)
-    acomp1_entry.insert(0, acomp1_antigo)
-    acomp1_entry.pack()
-
-    tk.Label(janela_editar, text="Acomp2").pack()
-    acomp2_entry = tk.Entry(janela_editar)
-    acomp2_entry.insert(0, acomp2_antigo)
-    acomp2_entry.pack()
-
-    tk.Label(janela_editar, text="Observacao").pack()
-    observacao_entry = tk.Entry(janela_editar)
-    observacao_entry.insert(0,observacao_antiga)
-    observacao_entry.pack()
-
-    tk.Label(janela_editar, text="Tamanho").pack()
-    tamanho_entry = tk.Entry(janela_editar)
-    tamanho_entry.insert(0,tamanho_antigo)
-    tamanho_entry.pack()
-
-    tk.Label(janela_editar, text="Pagamento").pack()
-    pagamento_entry = tk.Entry(janela_editar)
-    pagamento_entry.insert(0,pagamento_antigo)
-    pagamento_entry.pack()
-
-    tk.Label(janela_editar, text="Troco").pack()
-    troco_entry = tk.Entry(janela_editar)
-    troco_entry.insert(0,troco_antigo)
-    troco_entry.pack()
-
-    tk.Label(janela_editar, text="Taxa").pack()
-    taxa_entry = tk.Entry(janela_editar)
-    taxa_entry.insert(0,taxa_antiga)
-    taxa_entry.pack()
-
-    tk.Label(janela_editar, text="Total").pack()
-    total_entry = tk.Entry(janela_editar)
-    total_entry.insert(0,total_antigo)
-    total_entry.pack()
-
-    def salvar_edicao():
-        novo_prato = prato_entry.get()
-        novo_acomp1 = acomp1_entry.get()
-        novo_acomp2 = acomp2_entry.get()
-        nova_observacao = observacao_entry.get()
-        novo_tamanho = tamanho_entry.get()
-        novo_pagamento = pagamento_entry.get()
-        novo_troco = troco_entry.get()
-        nova_taxa = taxa_entry.get()
-        novo_total = total_entry.get()
-
-        cursor.execute("UPDATE pedidos SET prato=?, acompanhamento1=?, acompanhamento2=?, observacao=?, tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?", (novo_prato, novo_acomp1, novo_acomp2, nova_observacao, novo_tamanho, novo_pagamento, novo_troco, nova_taxa, novo_total, id))
-        conn.commit()
-        messagebox.showinfo("Sucesso","Pedido atualizado com sucesso")
-        janela_editar.destroy()
-
-    botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
-    botao_salvar.pack(pady=10)
-    def acionar_salvar(event=None):
-        botao_salvar.invoke()
-    janela_editar.bind("<Return>", acionar_salvar)
-
-def deletar_pedido():
-    selected = tree.selection()
-    if not selected:
-        messagebox.showwarning("Aviso","Selecione um pedido para deletar")
-        return
-
-    pedido_id = tree.item(selected[0],"values")[0]
-
-    confirm = messagebox.askyesno("Confirmar","Tem certeza que deseja excluir esse Pedido?")
-    if confirm:
-        cursor.execute("DELETE FROM pedidos WHERE id=?", (pedido_id,))
-        conn.commit()
-        messagebox.showinfo("Sucesso","Pedido deletado com sucesso")        
-        tree.delete(selected[0])
             
 frame_botoes = tk.Frame(janela)
 frame_botoes.pack(fill="x", padx=10, pady=10)
