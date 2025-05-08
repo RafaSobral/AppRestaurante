@@ -688,7 +688,6 @@ class Pedido:
             messagebox.showerror("Erro", "Selecione um cliente.")
             return
 
-        pedido_id = self.combo_cliente.get().split(" - ")[0]
         nome_cliente = self.combo_cliente.get().split(" - ")[1]
         prato = self.combo_prato.get()
         acomp1 = self.acomp1.get()
@@ -704,6 +703,11 @@ class Pedido:
         endereco = self.endereco.get()
         telefone = self.telefone.get()
         referencia = self.referencia.get()
+
+        # Gerar pedido_id reiniciando por dia
+        self.cursor.execute("SELECT MAX(pedido_id) FROM pedidos WHERE data_hoje = ?", (data_hoje,))
+        ultimo_id = self.cursor.fetchone()[0]
+        pedido_id = (ultimo_id or 0) + 1
 
         dados = (
             pedido_id, nome_cliente, prato, acomp1, acomp2, observacao,

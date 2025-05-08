@@ -65,7 +65,7 @@ for row in cursor.fetchall():
 def carregar_pedidos():
     for i in tree.get_children():
         tree.delete(i)
-    cursor.execute("SELECT id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
+    cursor.execute("SELECT pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
     for row in cursor.fetchall():
         tree.insert("", "end", values=row)
 
