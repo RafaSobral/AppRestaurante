@@ -20,7 +20,6 @@ app_Acompanhamentos = Acompanhamento()
 app_Caixa = Caixa()
 
 
-# Treeview com ID oculto como primeira coluna
 tree = ttk.Treeview(
     janela,
     columns=("id", "N. Pedido:", "Nome Cliente:", "Prato:", "Acompanhamento 1:", "Acompanhamento 2:",
@@ -69,7 +68,6 @@ tree.column("Data:", width=60)
 
 tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-# Carrega os pedidos do banco
 def carregar_pedidos():
     for i in tree.get_children():
         tree.delete(i)
@@ -79,7 +77,6 @@ def carregar_pedidos():
 
 carregar_pedidos()
 
-# Função deletar pedido
 def deletar_pedido():
     selected = tree.selection()
     if not selected:
@@ -95,7 +92,6 @@ def deletar_pedido():
         messagebox.showinfo("Sucesso", "Pedido deletado com sucesso")
         tree.delete(selected[0])
 
-# Função editar pedido
 def editar_pedido():
     selected = tree.selection()
     if not selected:
@@ -149,7 +145,6 @@ def editar_pedido():
 
     janela_editar.bind("<Return>", lambda event=None: botao_salvar.invoke())
 
-# Função para imprimir pedido (Daruma)
 def imprimir_pedido_daruma():
     selected = tree.selection()
     if not selected:
