@@ -6,7 +6,6 @@ from tkinter import messagebox,ttk
 from datetime import datetime
 from tkcalendar import DateEntry
 
-
 ################Classe Cliente################################
 
 class Cliente:
@@ -101,7 +100,7 @@ class Cliente:
         self.gerenciarClientes = tk.Toplevel()
         self.gerenciarClientes.title("Gerenciar Clientes")
         self.gerenciarClientes.focus_force()
-        self.gerenciarClientes.geometry('300x500')
+        self.gerenciarClientes.geometry('800x500')
         self.gerenciarClientes.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.tree = ttk.Treeview(self.gerenciarClientes, columns=("id","nome","endereco","telefone","referencia"), show="headings")
@@ -285,7 +284,7 @@ class Prato:
         self.gerenciarPratos = tk.Toplevel()
         self.gerenciarPratos.title("Gerenciar Pratos:")
         self.gerenciarPratos.focus_force()
-        self.gerenciarPratos.geometry('300x500')
+        self.gerenciarPratos.geometry('400x500')
         self.gerenciarPratos.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.tree = ttk.Treeview(self.gerenciarPratos, columns=("id","nome","descricao"), show="headings")
@@ -633,7 +632,7 @@ class Pedido:
         frame_pagamento = tk.Frame(self.cadastrarPedido)
         frame_pagamento.grid(row=9, column=1, columnspan=5, sticky="w")  
 
-        formas = ["Crédito", "Débito", "Dinheiro", "Pix", "Mumbuca"]
+        formas = ["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
         for forma in formas:
             tk.Radiobutton(frame_pagamento, text=forma, variable=self.pagamento, value=forma).pack(side="left", padx=2)
     
@@ -811,9 +810,9 @@ class Caixa:
 
         def obter_data():
             try:
-                locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')  # Linux/macOS
+                locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')  
             except:
-                locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')  # Windows fallback
+                locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')  
 
             for widget in self.frame_conteudo.winfo_children():
                 widget.destroy()

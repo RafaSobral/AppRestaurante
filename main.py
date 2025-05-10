@@ -73,6 +73,13 @@ def carregar_pedidos():
         tree.delete(i)
     cursor.execute("SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
     for row in cursor.fetchall():
+        row = list(row)
+        tamanho_map = {13: 'P', 15: 'M', 18: 'G'}
+        try:
+            valor = int(row[7])
+            row[7] = tamanho_map.get(valor, row[7])
+        except(ValueError, TypeError):
+            pass
         tree.insert("", "end", values=row)
 
 carregar_pedidos()
