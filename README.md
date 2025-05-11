@@ -85,6 +85,8 @@ python main.py
 * Imprimir duas comandas ao cadastrar o pedido (Cozinha e Motoboy)
 * Relatórios financeiros e estatísticas em gráfico com matplotlib
 * Interface responsiva para diferentes tamanhos de tela
+* Modernizar a interface gráfica
+* Salvar banco na nuvem
 
 ## 🤝 Contribuições
 
