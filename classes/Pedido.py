@@ -188,7 +188,6 @@ class Pedido:
         telefone = self.telefone.get()
         referencia = self.referencia.get()
 
-        # Gerar pedido_id reiniciando por dia
         self.cursor.execute("SELECT MAX(pedido_id) FROM pedidos WHERE data_hoje = ?", (data_hoje,))
         ultimo_id = self.cursor.fetchone()[0]
         pedido_id = (ultimo_id or 0) + 1
