@@ -1,9 +1,12 @@
 import tkinter as tk
-from tkinter import ttk,messagebox
-from classes import Cliente, Prato, Pedido, Acompanhamento, Caixa
+from tkinter import ttk
+from classes.Prato import Prato
+from classes.Caixa import Caixa
+from classes.Pedido import Pedido
+from classes.Cliente import Cliente
+from classes.Acompanhamento import Acompanhamento
+from utils import carregar_pedidos, deletar_pedido, editar_pedido, imprimir_pedido_daruma 
 import sqlite3
-import serial
-
 
 conn = sqlite3.connect("bomapetite.db")
 cursor = conn.cursor()
@@ -19,7 +22,6 @@ app_Pedido = Pedido()
 app_Acompanhamentos = Acompanhamento()
 app_Caixa = Caixa()
 
-
 tree = ttk.Treeview(
     janela,
     columns=("id", "N. Pedido:", "Nome Cliente:", "Prato:", "Acompanhamento 1:", "Acompanhamento 2:",
@@ -28,7 +30,7 @@ tree = ttk.Treeview(
 )
 
 tree.heading("id", text="id")
-tree.column("id", width=0, stretch=False)  # Oculta o ID
+tree.column("id", width=0, stretch=False) 
 
 tree.heading("N. Pedido:", text="N. Pedido:")
 tree.column("N. Pedido:", width=38)
@@ -68,146 +70,10 @@ tree.column("Data:", width=60)
 
 tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-def carregar_pedidos():
-    for i in tree.get_children():
-        tree.delete(i)
-    cursor.execute("SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje FROM pedidos")
-    for row in cursor.fetchall():
-        row = list(row)
-        tamanho_map = {13: 'P', 15: 'M', 18: 'G'}
-        try:
-            valor = int(row[7])
-            row[7] = tamanho_map.get(valor, row[7])
-        except(ValueError, TypeError):
-            pass
-        tree.insert("", "end", values=row)
-
-carregar_pedidos()
-
-def deletar_pedido():
-    selected = tree.selection()
-    if not selected:
-        messagebox.showwarning("Aviso", "Selecione um pedido para deletar")
-        return
-
-    id_real = tree.item(selected[0], "values")[0]
-
-    confirm = messagebox.askyesno("Confirmar", "Tem certeza que deseja excluir esse Pedido?")
-    if confirm:
-        cursor.execute("DELETE FROM pedidos WHERE id=?", (id_real,))
-        conn.commit()
-        messagebox.showinfo("Sucesso", "Pedido deletado com sucesso")
-        tree.delete(selected[0])
-
-def editar_pedido():
-    selected = tree.selection()
-    if not selected:
-        messagebox.showwarning("Aviso", "Selecione um pedido para editar")
-        return
-
-    valores = tree.item(selected[0], "values")
-    id_real = valores[0]
-
-    _, _, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, _ = valores
-
-    janela_editar = tk.Toplevel()
-    janela_editar.title('Editar Pedido')
-    janela_editar.focus_force()
-
-    campos = {
-        "Prato": prato_antigo,
-        "Acomp1": acomp1_antigo,
-        "Acomp2": acomp2_antigo,
-        "Observacao": observacao_antiga,
-        "Tamanho": tamanho_antigo,
-        "Pagamento": pagamento_antigo,
-        "Troco": troco_antigo,
-        "Taxa": taxa_antiga,
-        "Total": total_antigo
-    }
-
-    entradas = {}
-
-    for label, valor in campos.items():
-        tk.Label(janela_editar, text=label).pack()
-        entrada = tk.Entry(janela_editar)
-        entrada.insert(0, valor)
-        entrada.pack()
-        entradas[label] = entrada
-
-    def salvar_edicao():
-        novos_valores = [entradas[campo].get() for campo in campos]
-
-        cursor.execute("""
-            UPDATE pedidos SET prato=?, acompanhamento1=?, acompanhamento2=?, observacao=?,
-            tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?
-        """, (*novos_valores, id_real))
-        conn.commit()
-        messagebox.showinfo("Sucesso", "Pedido atualizado com sucesso")
-        janela_editar.destroy()
-        carregar_pedidos()
-
-    botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
-    botao_salvar.pack(pady=10)
-
-    janela_editar.bind("<Return>", lambda event=None: botao_salvar.invoke())
-
-def imprimir_pedido_daruma():
-    selected = tree.selection()
-    if not selected:
-        messagebox.showwarning("Aviso", "Selecione um pedido para imprimir.")
-        return
-
-    valores = tree.item(selected[0], "values")
-    if len(valores) < 13:
-        messagebox.showerror("Erro", "Dados do pedido incompletos.")
-        return
-
-    pedido = {
-        "pedido_id": valores[1],
-        "nome_cliente": valores[2],
-        "prato": valores[3],
-        "acomp1": valores[4],
-        "acomp2": valores[5],
-        "observacao": valores[6],
-        "tamanho": valores[7],
-        "pagamento": valores[8],
-        "troco": valores[9],
-        "taxa": valores[10],
-        "total": valores[11],
-        "data_hoje": valores[12]
-    }
-
-    try:
-        porta = serial.Serial('COM3', baudrate=9600, timeout=1)
-        texto = f"""
-*** Bom Apetite ***
-------------------------
-Pedido ID: {pedido['pedido_id']}
-Nome Cliente: {pedido['nome_cliente']}
-Prato: {pedido['prato']}
-Acomp1: {pedido['acomp1']}
-Acomp2: {pedido['acomp2']}
-Obs: {pedido['observacao']}
-Tamanho: {pedido['tamanho']}
-Pagamento: {pedido['pagamento']}
-Troco: R$ {pedido['troco']}
-Taxa: R$ {pedido['taxa']}
-Total: R$ {pedido['total']}
-Data: {pedido['data_hoje']}
-------------------------
-"""
-        porta.write(texto.encode('utf-8'))
-        porta.write(b'\n\n\n')
-        porta.close()
-        messagebox.showinfo("Sucesso", "Pedido enviado para a impressora.")
-    except Exception as e:
-        messagebox.showerror("Erro na impressão", f"Erro: {e}")
-
-            
+carregar_pedidos(tree, cursor)
+    
 frame_botoes = tk.Frame(janela)
 frame_botoes.pack(fill="x", padx=10, pady=10)
-
 
 botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerir Clientes [1]", command=app_Cliente.abrir_gerenciarClientes)
 botao_gerenciarClientes.pack(side="left", padx=5)
@@ -237,27 +103,27 @@ botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp [7]",
 botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
 janela.bind("7", lambda e: botao_cadastrarAcompanhamentos.invoke())
 
-botao_atualizar = tk.Button(frame_botoes, text="Atualizar [F5]", command=carregar_pedidos)
+botao_atualizar = tk.Button(frame_botoes, text="Atualizar [F5]", command=lambda:carregar_pedidos(tree, cursor))
 botao_atualizar.pack(side="right", pady=10)
-def acionar_atualizar(event=None):
-        botao_atualizar.invoke()
+def acionar_atualizar(_):
+    botao_atualizar.invoke()
 janela.bind("<F5>", acionar_atualizar)
 
-botao_editar = tk.Button(frame_botoes, text="Editar [E]", command=editar_pedido)
+botao_editar = tk.Button(frame_botoes, text="Editar [E]", command=lambda: editar_pedido(tree, cursor, conn))
 botao_editar.pack(side="right", padx=5, pady=10)
-def acionar_editar(event=None):
+def acionar_editar(_):
     botao_editar.invoke()
 janela.bind("<Key-e>", acionar_editar)
 
-botao_deletar = tk.Button(frame_botoes, text="Deletar [Del]", command=deletar_pedido)
+botao_deletar = tk.Button(frame_botoes, text="Deletar [Del]",  command=lambda: deletar_pedido(tree, cursor, conn))
 botao_deletar.pack(side="right", padx=5, pady=10)
-def acionar_deletar(event=None):
+def acionar_deletar(_):
     botao_deletar.invoke()
 janela.bind("<Delete>", acionar_deletar)
 
-btn_imprimir = tk.Button(frame_botoes, text="Re-imprimir [i]", command=imprimir_pedido_daruma)
+btn_imprimir = tk.Button(frame_botoes, text="Re-imprimir [i]", command=lambda: imprimir_pedido_daruma(tree))
 btn_imprimir.pack(side="right", padx=5, pady=10)
-def acionar_imprimir(event=None):
+def acionar_imprimir(_):
     btn_imprimir.invoke()
 janela.bind("<Key-i>", acionar_imprimir)
 
