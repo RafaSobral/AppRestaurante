@@ -25,6 +25,7 @@ class Pedido:
         self.taxa = None
         self.total = None
         self.nome_clientes = None
+        
 
         self.criar_tabela()
 
@@ -100,6 +101,7 @@ class Pedido:
 
         tk.Label(self.cadastrarPedido, text="Tamanho:").grid(row=8, column=0)
         self.tamanho = tk.StringVar()
+        self.tamanho.set(None)
 
         frame_tamanho = tk.Frame(self.cadastrarPedido)
         frame_tamanho.grid(row=8, column=1, columnspan=3, sticky="w")  
@@ -110,6 +112,7 @@ class Pedido:
         
         tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0, sticky="w")
         self.pagamento = tk.StringVar()
+        self.pagamento.set(None)
 
         frame_pagamento = tk.Frame(self.cadastrarPedido)
         frame_pagamento.grid(row=9, column=1, columnspan=5, sticky="w")  

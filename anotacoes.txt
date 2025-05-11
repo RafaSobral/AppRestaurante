@@ -1,7 +1,5 @@
 #trabalhar no design da interface 
 
-#ajeitar para aparecer p m e g na tabela de pedidos
-
 #fazer a documentacao
 
 #Pesquisar como organizar melhor o codigo 
@@ -10,7 +8,7 @@
 
 #Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
 
-#mudar nomeclatura de algumas funcoes e comentar o codigo
+
 
 
 
