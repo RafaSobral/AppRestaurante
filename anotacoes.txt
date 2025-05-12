@@ -1,16 +1,18 @@
-trabalhar no design da interface 
+adicionar bebidas a funcao de caixa
 
 selecionar tamanho da marmita e forma de pagamento ao apertar um botao
 
-atualizar documentacao
-
 funcao para imprimir uma comanda para o motoboy 
 
-funcao de multiplas marmitas em uma mesma comanda
+funcao de multiplas marmitas e bebidas em uma mesma comanda
 
 criar grafico
 
 criar funcao de rota
+
+trabalhar no design da interface 
+
+atualizar documentacao
 
 Pesquisar como organizar melhor o codigo, solid e clean code
 
