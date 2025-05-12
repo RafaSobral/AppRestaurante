@@ -116,12 +116,6 @@ botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp [9]",
 botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
 janela.bind("9", lambda e: botao_cadastrarAcompanhamentos.invoke())
 
-botao_atualizar = tk.Button(frame_botoes, text="Atualizar [F5]", command=lambda:carregar_pedidos(tree, cursor))
-botao_atualizar.pack(side="right", pady=10)
-def acionar_atualizar(_):
-    botao_atualizar.invoke()
-janela.bind("<F5>", acionar_atualizar)
-
 botao_editar = tk.Button(frame_botoes, text="Editar [E]", command=lambda: editar_pedido(tree, cursor, conn))
 botao_editar.pack(side="right", padx=5, pady=10)
 def acionar_editar(_):
