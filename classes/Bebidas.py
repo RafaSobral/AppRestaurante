@@ -115,7 +115,44 @@ class Bebidas:
 
 
     def editar_bebida(self):
-        pass
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione uma bebida para editar")
+            return
+
+        bebida_id, nome_antigo, preco_antigo = self.tree.item(selected[0], "values")
+        janela_editar = tk.Toplevel()
+        janela_editar.focus_force()
+        janela_editar.title("Editar Bebidas")
+        janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
+
+        tk.Label(janela_editar, text="Nome:").pack()
+        nome_entry = tk.Entry(janela_editar)
+        nome_entry.insert(0, nome_antigo)
+        nome_entry.pack()
+
+        tk.Label(janela_editar, text="Preco").pack()
+        preco_entry = tk.Entry(janela_editar)
+        preco_entry.insert(0, preco_antigo)
+        preco_entry.pack()
+
+        def salvar_edicao():
+            novo_nome = nome_entry.get()
+            novo_preco = preco_entry.get()
+
+            self.cursor.execute("UPDATE bebidas SET nome=?, preco=? WHERE id=?", (novo_nome, novo_preco, bebida_id))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Bebida atualizada com sucesso")
+            janela_editar.destroy()
+            self.gerenciarBebidas.destroy()
+            self.abrir_gerenciarBebidas()
+
+        botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
+        botao_salvar.pack(pady=10)
+        def acionar_salvar(_):
+            botao_salvar.invoke()
+        janela_editar.bind("<Return>", acionar_salvar)
+
 
     def deletar_bebida(self):
         pass
