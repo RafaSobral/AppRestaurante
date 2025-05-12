@@ -3,6 +3,7 @@ import sqlite3
 import tkinter as tk
 from datetime import datetime
 from tkinter import messagebox,ttk
+from utils import carregar_pedidos
 
 
 
@@ -26,6 +27,7 @@ class Pedido:
         self.taxa = None
         self.total = None
         self.nome_clientes = None
+        self.bebida = None
         
 
         self.criar_tabela()
@@ -41,6 +43,7 @@ class Pedido:
                 acompanhamento2 TEXT,
                 observacao TEXT,
                 tamanho TEXT,
+                bebida TEXT,
                 pagamento TEXT,
                 troco REAL,
                 taxa REAL,
@@ -50,11 +53,12 @@ class Pedido:
         ''')
         self.conexao.commit()
 
-    def abrir_cadastrarPedido(self):
+    def abrir_cadastrarPedido(self, tree=None):
+        self.tree = tree
         self.cadastrarPedido = tk.Toplevel()
         self.cadastrarPedido.focus_force()
         self.cadastrarPedido.title('Cadastrar Pedido')
-        self.cadastrarPedido.geometry('500x310')
+        self.cadastrarPedido.geometry('500x330')
         self.cadastrarPedido.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.cursor.execute("SELECT id, nome FROM clientes")
@@ -111,41 +115,49 @@ class Pedido:
         for txt, val in tamanhos:
             tk.Radiobutton(frame_tamanho, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).pack(side="left", padx=12)       
         
-        tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=9, column=0, sticky="w")
+        self.cursor.execute("SELECT nome FROM bebidas")
+        bebida = [a[0] for a in self.cursor.fetchall()]
+        tk.Label(self.cadastrarPedido, text="Bebida:").grid(row=9,column=0)
+        self.bebida = ttk.Combobox(self.cadastrarPedido, values=bebida)
+        self.bebida.grid(row=9, column=1)
+        self.bebida.bind("<<ComboboxSelected>>", lambda event: self.calcular_valor())
+        
+        tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=10, column=0, sticky="w")
         self.pagamento = tk.StringVar()
         self.pagamento.set(None)
 
         frame_pagamento = tk.Frame(self.cadastrarPedido)
-        frame_pagamento.grid(row=9, column=1, columnspan=5, sticky="w")  
+        frame_pagamento.grid(row=10, column=1, columnspan=5, sticky="w")  
 
         formas = ["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
         for forma in formas:
             tk.Radiobutton(frame_pagamento, text=forma, variable=self.pagamento, value=forma).pack(side="left", padx=2)
     
-        tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=10, column=0)
+        tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=11, column=0)
         self.troco = tk.Entry(self.cadastrarPedido)
-        self.troco.grid(row=10, column=1)
+        self.troco.grid(row=11, column=1)
 
-        tk.Label(self.cadastrarPedido, text="Taxa de entrega:").grid(row=11, column=0)
+        tk.Label(self.cadastrarPedido, text="Taxa de entrega:").grid(row=12, column=0)
         self.taxa = tk.Entry(self.cadastrarPedido)
-        self.taxa.grid(row=11, column=1)
+        self.taxa.grid(row=12, column=1)
         self.taxa.bind("<KeyRelease>", lambda e: self.calcular_valor())
 
-        tk.Label(self.cadastrarPedido, text="Valor Total:").grid(row=12, column=0)
+        tk.Label(self.cadastrarPedido, text="Valor Total:").grid(row=13, column=0)
         self.total = tk.StringVar()
-        tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=12, column=1)
+        tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=13, column=1)
 
         botao_salvar = tk.Button(self.cadastrarPedido, text="Salvar [Enter]", command=self.salvar_Pedido)
-        botao_salvar.grid(row=13, column=0)
+        botao_salvar.grid(row=14, column=0)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarPedido.bind("<Return>", acionar_salvar)
 
         botao_voltar = tk.Button(self.cadastrarPedido, text="Fechar [Esc]", command=self.cadastrarPedido.destroy)
-        botao_voltar.grid(row = 13, column = 1)
+        botao_voltar.grid(row = 14, column = 1)
         def acionar_voltar(_):
             botao_voltar.invoke()
         self.cadastrarPedido.bind("<Escape>", acionar_voltar)
+
 
     def preencher_dados_cliente(self, event):
         cliente_id = self.combo_cliente.get().split(" - ")[0]
@@ -161,9 +173,13 @@ class Pedido:
 
     def calcular_valor(self):
         try:
+            bebida_escolhida = self.bebida.get()
+            self.cursor.execute("SELECT preco FROM bebidas WHERE nome=?",(bebida_escolhida,))
+            resultado = self.cursor.fetchone()
+            valor_bebida = float(resultado[0])if resultado else 0
             valor_marmita = float(self.tamanho.get())
             taxa = float(self.taxa.get()) if self.taxa.get() else 0
-            total  = valor_marmita + taxa
+            total  = valor_marmita + taxa + valor_bebida
             self.total.set(f"{total:.2f}")
         except:
             self.total.set("")
@@ -179,6 +195,7 @@ class Pedido:
         acomp2 = self.acomp2.get()
         observacao = self.observacao.get()
         tamanho = self.tamanho.get()
+        bebida = self.bebida.get()
         pagamento = self.pagamento.get()
         troco = float(self.troco.get() or 0)
         taxa = float(self.taxa.get() or 0)
@@ -195,12 +212,12 @@ class Pedido:
 
         dados = (
             pedido_id, nome_cliente, prato, acomp1, acomp2, observacao,
-            tamanho, pagamento, troco, taxa, total, data_hoje
+            tamanho, bebida, pagamento, troco, taxa, total, data_hoje
         )
 
         self.cursor.execute('''
-            INSERT INTO pedidos (pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, pagamento, troco, taxa, total, data_hoje)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
+            INSERT INTO pedidos (pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2, observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                
         ''', dados)
         self.conexao.commit()
 
@@ -215,6 +232,7 @@ class Pedido:
             "acomp2": acomp2,
             "observacao": observacao,
             "tamanho": tamanho,
+            "bebida": bebida,
             "pagamento": pagamento,
             "troco": troco,
             "taxa": taxa,
@@ -226,6 +244,8 @@ class Pedido:
 
         self.cadastrarPedido.destroy()
         messagebox.showinfo("Sucesso", "Pedido salvo e impresso!")
+        carregar_pedidos(self.tree, self.cursor)
+
 
 
     def imprimir_pedido_daruma_por_dados(self, pedido):
@@ -244,6 +264,7 @@ Acomp1: {pedido['acomp1']}
 Acomp2: {pedido['acomp2']}
 Obs: {pedido['observacao']}
 Tamanho: {pedido['tamanho']}
+Bebida: {pedido['bebida']}
 Pagamento: {pedido['pagamento']}
 Troco: R$ {pedido['troco']}
 Taxa: R$ {pedido['taxa']}

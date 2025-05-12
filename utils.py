@@ -129,7 +129,7 @@ def carregar_pedidos(tree, cursor):
     
     cursor.execute("""
         SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-               observacao, tamanho, pagamento, troco, taxa, total, data_hoje 
+               observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
         FROM pedidos
     """)
     

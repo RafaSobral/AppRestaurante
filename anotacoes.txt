@@ -1,5 +1,7 @@
 trabalhar no design da interface 
 
+terminar de ajeitar a parte de bebidas na funcao util
+
 criar funcao das bebidas
 
 selecionar tamanho da marmita e forma de pagamento ao apertar um botao

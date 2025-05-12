@@ -27,7 +27,7 @@ app_Bebidas = Bebidas()
 tree = ttk.Treeview(
     janela,
     columns=("id", "N. Pedido:", "Nome Cliente:", "Prato:", "Acompanhamento 1:", "Acompanhamento 2:",
-             "Observacao:", "Tamanho:", "Pagamento:", "Troco:", "Taxa:", "Total:", "Data:"),
+             "Observacao:", "Tamanho:", "Bebida:", "Pagamento:", "Troco:", "Taxa:", "Total:", "Data:"),
     show="headings"
 )
 
@@ -54,6 +54,9 @@ tree.column("Observacao:", width=150)
 
 tree.heading("Tamanho:", text="Tamanho:")
 tree.column("Tamanho:", width=38)
+
+tree.heading("Bebida:", text="Bebida:")
+tree.column("Bebida:", width=100)
 
 tree.heading("Pagamento:", text="Pagamento:")
 tree.column("Pagamento:", width=70)
@@ -97,7 +100,7 @@ botao_cadastrarBebidas = tk.Button(frame_botoes, text="Criar Bebidas [5]", comma
 botao_cadastrarBebidas.pack(side="left", padx=5)
 janela.bind("5", lambda e: botao_cadastrarBebidas.invoke())
 
-botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido [6]", command=app_Pedido.abrir_cadastrarPedido)
+botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido [6]", command=lambda: app_Pedido.abrir_cadastrarPedido(tree=tree))
 botao_cadastrarPedidos.pack(side="left", padx=5)
 janela.bind("6", lambda e: botao_cadastrarPedidos.invoke())
 
