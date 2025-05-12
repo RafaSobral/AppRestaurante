@@ -10,7 +10,7 @@ funcao para imprimir uma comanda para o motoboy
 
 criar grafico
 
-criar funcao de roda
+criar funcao de rota
 
 Pesquisar como organizar melhor o codigo, solid e clean code
 
