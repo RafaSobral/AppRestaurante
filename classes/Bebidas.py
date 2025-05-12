@@ -88,7 +88,7 @@ class Bebidas:
         botao_editar.pack(side="left", padx=10, pady=10)
         self.gerenciarBebidas.bind("<Key-e>", lambda e: botao_editar.invoke())
 
-        botao_deletar = tk.Button(self.gerenciarBebidas, text="Deletar [E]", command=self.deletar_bebida)
+        botao_deletar = tk.Button(self.gerenciarBebidas, text="Deletar [Del]", command=self.deletar_bebida)
         botao_deletar.pack(side="left", padx=10, pady=10)
         self.gerenciarBebidas.bind("<Delete>", lambda e: botao_deletar.invoke())
 
@@ -155,4 +155,18 @@ class Bebidas:
 
 
     def deletar_bebida(self):
-        pass
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Aviso","Selecione uma bebida para editar")
+            return
+        
+        bebida_id = self.tree.item(selected[0], "values")[0]
+
+        confirm = messagebox.askyesno("Confirmar","Tem certeza que deseja deletar essa bebida?")
+        if confirm:
+            self.cursor.execute("DELETE FROM bebidas WHERE id=?", (bebida_id,))
+            self.conexao.commit()
+            messagebox.showinfo("Sucesso","Bebida deletada com sucesso!")
+            self.tree.delete(selected[0])
+            self.gerenciarBebidas.destroy()
+            self.abrir_gerenciarBebidas()
