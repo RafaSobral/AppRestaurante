@@ -1,12 +1,22 @@
-#trabalhar no design da interface 
+trabalhar no design da interface 
 
-#fazer a documentacao
+criar funcao das bebidas
 
-#Pesquisar como organizar melhor o codigo 
+selecionar tamanho da marmita e forma de pagamento ao apertar um botao
 
-#Estudar algumas linhas de codigo da classe pedido que nao entendi completamente
+atualizar documentacao
 
-#Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
+funcao para imprimir uma comanda para o motoboy 
+
+criar grafico
+
+criar funcao de roda
+
+Pesquisar como organizar melhor o codigo, solid e clean code
+
+Estudar algumas linhas de codigo da classe pedido que nao entendi completamente
+
+Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
 
 
 
