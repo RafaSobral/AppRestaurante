@@ -1,5 +1,5 @@
-from tkinter import messagebox
 import tkinter as tk
+from tkinter import messagebox
 
 def imprimir_pedido_daruma(tree):
     selected = tree.selection()
@@ -54,10 +54,6 @@ Data: {pedido['data_hoje']}
         messagebox.showerror("Erro na impressão", f"Erro: {e}")
 
 
-
-
-
-
 def editar_pedido(tree, cursor, conn):
     selected = tree.selection()
     if not selected:
@@ -108,11 +104,7 @@ def editar_pedido(tree, cursor, conn):
 
     botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
     botao_salvar.pack(pady=10)
-
     janela_editar.bind("<Return>", lambda event=None: botao_salvar.invoke())
-
-
-
 
 
 def deletar_pedido(tree,cursor,conn):
@@ -129,9 +121,6 @@ def deletar_pedido(tree,cursor,conn):
         conn.commit()
         messagebox.showinfo("Sucesso", "Pedido deletado com sucesso")
         tree.delete(selected[0])
-
-
-
 
 
 def carregar_pedidos(tree, cursor):

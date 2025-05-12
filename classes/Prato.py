@@ -1,5 +1,5 @@
-import tkinter as tk
 import sqlite3
+import tkinter as tk
 from tkinter import messagebox,ttk
 
 class Prato:

@@ -1,8 +1,8 @@
+import locale
 import sqlite3
 import tkinter as tk
 from datetime import datetime
 from tkcalendar import DateEntry
-import locale
 
 class Caixa:
     def __init__(self):

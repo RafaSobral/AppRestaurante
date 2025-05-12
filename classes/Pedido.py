@@ -1,8 +1,9 @@
-import tkinter as tk
-import sqlite3
 import serial
-from tkinter import messagebox,ttk
+import sqlite3
+import tkinter as tk
 from datetime import datetime
+from tkinter import messagebox,ttk
+
 
 
 class Pedido:

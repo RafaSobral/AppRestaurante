@@ -11,6 +11,8 @@ class Bebidas:
         self.cadastrarBebidas = None
         self.nome = None 
         self.preco = None
+        self.gerenciarBebidas = None
+        self.tree = None
 
 
 
@@ -29,6 +31,7 @@ class Bebidas:
         self.cadastrarBebidas.title('Cadastrar Bebidas')
         self.cadastrarBebidas.focus_force()
         self.cadastrarBebidas.geometry('190x100')
+        self.cadastrarBebidas.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         label_nome = tk.Label(self.cadastrarBebidas, text="Nome:")
         label_nome.grid(row=0,column=0)
@@ -59,16 +62,60 @@ class Bebidas:
 
 
     def abrir_gerenciarBebidas(self):
-        pass
+        self.gerenciarBebidas = tk.Toplevel()
+        self.gerenciarBebidas.title("Gerenciar Bebidas")
+        self.gerenciarBebidas.focus_force()
+        self.gerenciarBebidas.geometry('400x500')
+        self.gerenciarBebidas.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-    
+        self.tree = ttk.Treeview(self.gerenciarBebidas, columns=("id","nome","preco"), show="headings")
+        
+        self.tree.heading("id", text="ID")
+        self.tree.heading("nome", tex="Nome")
+        self.tree.heading("preco", text="Preco")
+
+        self.tree.column("id", width=50)
+        self.tree.column("nome", width=50)
+        self.tree.column("preco", width=50)
+
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.cursor.execute("SELECT * FROM bebidas")
+        for row in self.cursor.fetchall():
+            self.tree.insert("", "end", values=row)
+
+        botao_editar = tk.Button(self.gerenciarBebidas, text="Editar [E]", command=self.editar_bebida)
+        botao_editar.pack(side="left", padx=10, pady=10)
+        self.gerenciarBebidas.bind("<Key-e>", lambda e: botao_editar.invoke())
+
+        botao_deletar = tk.Button(self.gerenciarBebidas, text="Deletar [E]", command=self.deletar_bebida)
+        botao_deletar.pack(side="left", padx=10, pady=10)
+        self.gerenciarBebidas.bind("<Delete>", lambda e: botao_deletar.invoke())
+
+        botao_fechar = tk.Button(self.gerenciarBebidas, text="Fechar [Esc]", command=self.gerenciarBebidas.destroy)
+        botao_fechar.pack(side="left", padx=10, pady=10)
+        self.gerenciarBebidas.bind("<Escape>", lambda e: botao_fechar.invoke())
+
     def salvar_bebida(self):
-        pass
+        nome = self.nome.get()
+        preco = self.preco.get()
+
+        if nome == "":
+            messagebox.showerror("Erro", "O nome nao pode estar vazio")
+            return
+
+        self.cursor.execute('''
+            INSERT INTO bebidas (nome, preco) 
+            VALUES(?,?)
+        ''',(nome,preco))
+        self.conexao.commit()
+
+        messagebox.showinfo("Sucesso", "Bebida cadastrada!")
+        self.cadastrarBebidas.destroy()
 
 
     def editar_bebida(self):
         pass
-
 
     def deletar_bebida(self):
         pass

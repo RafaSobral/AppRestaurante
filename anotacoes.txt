@@ -8,6 +8,8 @@ atualizar documentacao
 
 funcao para imprimir uma comanda para o motoboy 
 
+funcao de multiplas marmitas em uma mesma comanda
+
 criar grafico
 
 criar funcao de rota
