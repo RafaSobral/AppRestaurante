@@ -1,22 +1,28 @@
-selecionar tamanho da marmita e forma de pagamento ao apertar um botao
+1 - selecionar tamanho da marmita e forma de pagamento ao apertar um botao
 
-funcao para imprimir uma comanda para o motoboy 
+2 - Carregar apenas os pedidos do dia no iniciar 
 
-funcao de multiplas marmitas e bebidas em uma mesma comanda
+3 - funcao para imprimir uma comanda para o motoboy 
 
-criar grafico
+(Verificar a dificuldade) funcao de multiplas marmitas e bebidas em uma mesma comanda
+
+4 - criar grafico
+
+5 - trabalhar no design da interface 
+
+6 - Pesquisar como organizar melhor o codigo, solid e clean code
+
+7 - Estudar algumas linhas de codigo da classe pedido e caixa que nao entendi completamente
+
+8 - Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
+
+9 - atualizar documentacao
+
+-------quem sabe no futuro:---------
 
 criar funcao de rota
 
-trabalhar no design da interface 
-
-atualizar documentacao
-
-Pesquisar como organizar melhor o codigo, solid e clean code
-
-Estudar algumas linhas de codigo da classe pedido e caixa que nao entendi completamente
-
-Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
+criar funcao para enviar os pedidos para o celular do motoboy ou para uma tela na cozinha
 
 
 
