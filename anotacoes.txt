@@ -1,5 +1,3 @@
-adicionar bebidas a funcao de caixa
-
 selecionar tamanho da marmita e forma de pagamento ao apertar um botao
 
 funcao para imprimir uma comanda para o motoboy 
@@ -16,7 +14,7 @@ atualizar documentacao
 
 Pesquisar como organizar melhor o codigo, solid e clean code
 
-Estudar algumas linhas de codigo da classe pedido que nao entendi completamente
+Estudar algumas linhas de codigo da classe pedido e caixa que nao entendi completamente
 
 Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
 

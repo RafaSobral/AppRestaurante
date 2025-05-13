@@ -42,16 +42,16 @@ class Caixa:
 
             if dia == '00' or dia == '0':
                 data_like = f"-{mes}-{ano}"
-                self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje LIKE ?", (f"%{data_like}",))
+                self.cursor.execute("SELECT pagamento, total, tamanho, bebida, troco, taxa FROM pedidos WHERE data_hoje LIKE ?", (f"%{data_like}",))
                 nome_mes = datetime.strptime(mes, "%m").strftime('%B')
                 titulo = f"Fechamento de {nome_mes.capitalize()}/{ano}"
                 label_total = f"Total do mês de {nome_mes.capitalize()}:"
             elif data_selecionada == hoje:
-                self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
+                self.cursor.execute("SELECT pagamento, total, tamanho, bebida, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
                 titulo = "Fechamento de Hoje"
                 label_total = "Total de Hoje:"
             else:
-                self.cursor.execute("SELECT pagamento, total, tamanho, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
+                self.cursor.execute("SELECT pagamento, total, tamanho, bebida, troco, taxa FROM pedidos WHERE data_hoje = ?", (data_selecionada,))
                 titulo = f"Fechamento do Dia {data_selecionada}"
                 label_total = f"Total do Dia {data_selecionada}:"
 
@@ -62,14 +62,20 @@ class Caixa:
             total_taxa = 0
             formas_pagamento = {}
             tamanhos_marmita = {}
+            bebidas_vendidas = {}
 
-            for pagamento, valor, tamanho, troco, taxa in pedidos:
+            for pagamento, valor, tamanho, bebida, troco, taxa in pedidos:
                 total_geral += valor
                 total_troco += troco
                 total_taxa += taxa
 
                 formas_pagamento[pagamento] = formas_pagamento.get(pagamento, 0) + valor
                 tamanhos_marmita[tamanho] = tamanhos_marmita.get(tamanho, 0) + 1
+
+                if bebida and bebida.strip():
+                    bebidas = [b.strip() for b in bebida.split(',')] 
+                    for b in bebidas:
+                        bebidas_vendidas[b] = bebidas_vendidas.get(b, 0) + 1
 
             self.fecharCaixa.title(titulo)
 
@@ -86,11 +92,17 @@ class Caixa:
                 descricao = mapa_tamanhos.get(str(tamanho), str(tamanho))
                 tk.Label(self.frame_conteudo, text=f"{descricao}: {quantidade}x").pack(anchor='w', padx=10)
 
+            if bebidas_vendidas:
+                tk.Label(self.frame_conteudo, text="\nBebidas Vendidas:", font=("Arial", 10, "underline")).pack()
+                for bebida, qtd in bebidas_vendidas.items():
+                    tk.Label(self.frame_conteudo, text=f"{bebida}: {qtd}x").pack(anchor='w', padx=10)
+
+
             tk.Label(self.frame_conteudo, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
             tk.Label(self.frame_conteudo, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
 
             botao_imprimir = tk.Button(self.frame_conteudo, text="Imprimir Fechamento [i]", command=lambda: self.imprimir_fechamento_caixa(
-                total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo))
+                total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo,  bebidas_vendidas))
             botao_imprimir.pack(pady=10)
             def acionar_imprimir(event=None):
                 botao_imprimir.invoke()
@@ -113,7 +125,7 @@ class Caixa:
         self.frame_conteudo.pack(fill='both', expand=True)
 
 
-    def imprimir_fechamento_caixa(self, total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje):
+    def imprimir_fechamento_caixa(self, total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, hoje, bebidas_vendidas):
         mapa_tamanhos = {'13': 'P', '12': 'M', '11': 'G'}  
 
         try:
@@ -135,6 +147,12 @@ class Caixa:
             for cod, qtd in tamanhos_marmita.items():
                 tamanho = mapa_tamanhos.get(str(cod), str(cod))
                 texto += f"{tamanho}: {qtd}x\n"
+
+            if bebidas_vendidas:
+                texto += "\n-- Bebidas Vendidas --\n"
+                for bebida, qtd in bebidas_vendidas.items():
+                    texto += f"{bebida}: {qtd}x\n"
+
 
             texto += f"""
     Troco Total: R$ {total_troco:.2f}

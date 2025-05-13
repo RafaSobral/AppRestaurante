@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import serial
 
 def imprimir_pedido_daruma(tree):
     selected = tree.selection()
@@ -8,7 +9,7 @@ def imprimir_pedido_daruma(tree):
         return
 
     valores = tree.item(selected[0], "values")
-    if len(valores) < 13:
+    if len(valores) < 14:
         messagebox.showerror("Erro", "Dados do pedido incompletos.")
         return
 
@@ -20,11 +21,12 @@ def imprimir_pedido_daruma(tree):
         "acomp2": valores[5],
         "observacao": valores[6],
         "tamanho": valores[7],
-        "pagamento": valores[8],
-        "troco": valores[9],
-        "taxa": valores[10],
-        "total": valores[11],
-        "data_hoje": valores[12]
+        "bebida": valores[8],
+        "pagamento": valores[9],
+        "troco": valores[10],
+        "taxa": valores[11],
+        "total": valores[12],
+        "data_hoje": valores[13]
     }
 
     try:
@@ -39,6 +41,7 @@ Acomp1: {pedido['acomp1']}
 Acomp2: {pedido['acomp2']}
 Obs: {pedido['observacao']}
 Tamanho: {pedido['tamanho']}
+Bebida: {pedido['bebida']}
 Pagamento: {pedido['pagamento']}
 Troco: R$ {pedido['troco']}
 Taxa: R$ {pedido['taxa']}
@@ -63,7 +66,7 @@ def editar_pedido(tree, cursor, conn):
     valores = tree.item(selected[0], "values")
     id_real = valores[0]
 
-    _, _, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, _ = valores
+    _, _, _, prato_antigo, acomp1_antigo, acomp2_antigo, observacao_antiga, tamanho_antigo, bebida_antiga, pagamento_antigo, troco_antigo, taxa_antiga, total_antigo, _ = valores
 
     janela_editar = tk.Toplevel()
     janela_editar.title('Editar Pedido')
@@ -75,6 +78,7 @@ def editar_pedido(tree, cursor, conn):
         "Acomp2": acomp2_antigo,
         "Observacao": observacao_antiga,
         "Tamanho": tamanho_antigo,
+        "Bebida": bebida_antiga,
         "Pagamento": pagamento_antigo,
         "Troco": troco_antigo,
         "Taxa": taxa_antiga,
@@ -95,7 +99,7 @@ def editar_pedido(tree, cursor, conn):
 
         cursor.execute("""
             UPDATE pedidos SET prato=?, acompanhamento1=?, acompanhamento2=?, observacao=?,
-            tamanho=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?
+            tamanho=?,bebida=? pagamento=?, troco=?, taxa=?, total=? WHERE id=?
         """, (*novos_valores, id_real))
         conn.commit()
         messagebox.showinfo("Sucesso", "Pedido atualizado com sucesso")
