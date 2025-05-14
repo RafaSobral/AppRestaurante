@@ -1,10 +1,11 @@
-3 - funcao para imprimir uma comanda para o motoboy 
 
-(Verificar a dificuldade) funcao de multiplas marmitas e bebidas em uma mesma comanda
+2 - Funcao para imprimir uma comanda para o motoboy 
 
-4 - criar grafico
+3 - Funcao de multiplas marmitas e bebidas em uma mesma comanda
 
-5 - trabalhar no design da interface 
+4 - Criar grafico
+
+5 - Trabalhar no design da interface 
 
 6 - Pesquisar como organizar melhor o codigo, solid e clean code
 

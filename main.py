@@ -1,13 +1,14 @@
 import sqlite3
 import tkinter as tk
 from tkinter import ttk
+from tkcalendar import DateEntry
 from classes.Prato import Prato
 from classes.Caixa import Caixa
 from classes.Pedido import Pedido
 from classes.Bebidas import Bebidas
 from classes.Cliente import Cliente
 from classes.Acompanhamento import Acompanhamento
-from utils import carregar_pedidos, deletar_pedido, editar_pedido, imprimir_pedido_daruma 
+from utils import carregar_pedidos, deletar_pedido, editar_pedido, imprimir_pedido_daruma, obter_data 
 
 conn = sqlite3.connect("bomapetite.db")
 cursor = conn.cursor()
@@ -23,6 +24,18 @@ app_Pedido = Pedido()
 app_Acompanhamentos = Acompanhamento()
 app_Caixa = Caixa()
 app_Bebidas = Bebidas()
+
+frame_data = tk.Frame(janela)
+frame_data.pack(pady=10, padx=10, anchor="nw")
+
+date_entry = DateEntry(frame_data, width=12, background='darkblue', foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
+date_entry.pack(side='left', padx=(0, 10))  # Espaço à direita
+
+botao_confirmar = tk.Button(frame_data, text="Confirmar Data [Enter]", command=lambda: carregar_pedidos(tree, cursor, *obter_data(date_entry)))
+botao_confirmar.pack(side='left')
+def acionar_confirmar(_):
+    botao_confirmar.invoke()
+janela.bind("<Return>", acionar_confirmar)
 
 tree = ttk.Treeview(
     janela,
@@ -75,7 +88,7 @@ tree.column("Data:", width=60)
 
 tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-carregar_pedidos(tree, cursor)
+carregar_pedidos(tree, cursor, *obter_data(date_entry))
     
 frame_botoes = tk.Frame(janela)
 frame_botoes.pack(fill="x", padx=10, pady=10)
@@ -116,7 +129,7 @@ botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp [9]",
 botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
 janela.bind("9", lambda e: botao_cadastrarAcompanhamentos.invoke())
 
-botao_editar = tk.Button(frame_botoes, text="Editar [E]", command=lambda: editar_pedido(tree, cursor, conn))
+botao_editar = tk.Button(frame_botoes, text="Editar [E]", command=lambda: editar_pedido(tree, cursor, conn, date_entry))
 botao_editar.pack(side="right", padx=5, pady=10)
 def acionar_editar(_):
     botao_editar.invoke()
@@ -134,8 +147,8 @@ def acionar_imprimir(_):
     btn_imprimir.invoke()
 janela.bind("<Key-i>", acionar_imprimir)
 
-botao_fecharCaixa = tk.Button(frame_botoes, text="Caixa [0]", command=app_Caixa.abrir_fecharCaixa)
+botao_fecharCaixa = tk.Button(frame_botoes, text="Caixa [C]", command=app_Caixa.abrir_fecharCaixa)
 botao_fecharCaixa.pack(side="right", padx=5)
-janela.bind("0", lambda e: botao_fecharCaixa.invoke())
+janela.bind("<Key-c>", lambda e: botao_fecharCaixa.invoke())
 
 janela.mainloop()

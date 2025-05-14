@@ -3,6 +3,7 @@ from tkinter import messagebox
 import serial
 from datetime import datetime
 
+
 hoje = datetime.now().strftime("%d-%m-%Y")
 
 def imprimir_pedido_daruma(tree):
@@ -60,7 +61,7 @@ Data: {pedido['data_hoje']}
         messagebox.showerror("Erro na impressão", f"Erro: {e}")
 
 
-def editar_pedido(tree, cursor, conn):
+def editar_pedido(tree, cursor, conn, date_entry):
     selected = tree.selection()
     if not selected:
         messagebox.showwarning("Aviso", "Selecione um pedido para editar")
@@ -102,12 +103,13 @@ def editar_pedido(tree, cursor, conn):
 
         cursor.execute("""
             UPDATE pedidos SET prato=?, acompanhamento1=?, acompanhamento2=?, observacao=?,
-            tamanho=?,bebida=? pagamento=?, troco=?, taxa=?, total=? WHERE id=?
+            tamanho=?,bebida=?, pagamento=?, troco=?, taxa=?, total=? WHERE id=?
         """, (*novos_valores, id_real))
         conn.commit()
         messagebox.showinfo("Sucesso", "Pedido atualizado com sucesso")
         janela_editar.destroy()
-        carregar_pedidos(tree, cursor)
+        dia, mes, ano = obter_data(date_entry)
+        carregar_pedidos(tree, cursor, dia, mes, ano)
 
     botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
     botao_salvar.pack(pady=10)
@@ -130,14 +132,45 @@ def deletar_pedido(tree,cursor,conn):
         tree.delete(selected[0])
 
 
-def carregar_pedidos(tree, cursor):
+def carregar_pedidos(tree, cursor, dia, mes, ano):
     for i in tree.get_children():
         tree.delete(i)
-    
-    cursor.execute("""
-        SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-               observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
-        FROM pedidos  WHERE data_hoje LIKE ?""", (hoje,))
+
+    data_selecionada = f"{dia}-{mes}-{ano}"
+
+    if dia in ['00', '0'] and mes in ['00', '0'] and ano in ['00', '0']:
+        cursor.execute("""
+            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
+                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
+            FROM pedidos
+        """)
+    elif dia in ['00', '0'] and mes in ['00', '0']:
+        data_like = f"{ano}"
+        cursor.execute("""
+            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
+                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
+            FROM pedidos WHERE data_hoje LIKE ?
+        """, (f"%{data_like}%",))
+    elif dia in ['00', '0']:
+        data_like = f"-{mes}-{ano}"
+        cursor.execute("""
+            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
+                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
+            FROM pedidos WHERE data_hoje LIKE ?
+        """, (f"%{data_like}%",))
+    elif data_selecionada == hoje:
+        
+        cursor.execute("""
+            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
+                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
+            FROM pedidos WHERE data_hoje LIKE ?
+        """, (data_selecionada,))
+    else:
+        cursor.execute("""
+            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
+                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
+            FROM pedidos WHERE data_hoje LIKE ?
+        """, (data_selecionada,))
     
     for row in cursor.fetchall():
         row = list(row)
@@ -149,3 +182,18 @@ def carregar_pedidos(tree, cursor):
             pass
         
         tree.insert("", "end", values=row)
+
+
+
+def obter_data(date_entry):
+    data_str = date_entry.get()
+    dia, mes, ano = data_str.split('/')
+    return  dia, mes, ano
+
+
+
+
+
+
+
+    

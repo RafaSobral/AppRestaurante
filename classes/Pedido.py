@@ -263,7 +263,13 @@ class Pedido:
 
         self.cadastrarPedido.destroy()
         messagebox.showinfo("Sucesso", "Pedido salvo e impresso!")
-        carregar_pedidos(self.tree, self.cursor)
+
+        agora = datetime.now()
+        dia = agora.strftime("%d")
+        mes = agora.strftime("%m")
+        ano = agora.strftime("%Y")
+
+        carregar_pedidos(self.tree, self.cursor, dia, mes, ano)
 
 
 
