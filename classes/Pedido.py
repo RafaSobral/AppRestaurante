@@ -28,6 +28,7 @@ class Pedido:
         self.total = None
         self.nome_clientes = None
         self.bebida = None
+        self.tree = None
         
 
         self.criar_tabela()
@@ -57,8 +58,8 @@ class Pedido:
         self.tree = tree
         self.cadastrarPedido = tk.Toplevel()
         self.cadastrarPedido.focus_force()
-        self.cadastrarPedido.title('Cadastrar Pedido')
-        self.cadastrarPedido.geometry('500x330')
+        self.cadastrarPedido.title('Cadastrar Pedido - Use as teclas para selecionar o tamanho')
+        self.cadastrarPedido.geometry('560x330')
         self.cadastrarPedido.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.cursor.execute("SELECT id, nome FROM clientes")
@@ -114,7 +115,10 @@ class Pedido:
         tamanhos = [("P", "13"), ("M", "15"), ("G", "18")]
         for txt, val in tamanhos:
             tk.Radiobutton(frame_tamanho, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).pack(side="left", padx=12)       
-        
+        self.cadastrarPedido.bind("p", lambda e: self.selecionar_tamanho("13"))
+        self.cadastrarPedido.bind("m", lambda e: self.selecionar_tamanho("15"))
+        self.cadastrarPedido.bind("g", lambda e: self.selecionar_tamanho("18"))
+
         self.cursor.execute("SELECT nome FROM bebidas")
         bebida = [a[0] for a in self.cursor.fetchall()]
         tk.Label(self.cadastrarPedido, text="Bebida:").grid(row=9,column=0)
@@ -129,10 +133,15 @@ class Pedido:
         frame_pagamento = tk.Frame(self.cadastrarPedido)
         frame_pagamento.grid(row=10, column=1, columnspan=5, sticky="w")  
 
-        formas = ["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
+        formas = ["Credito [1]", "Debito [2]", "Dinheiro [3]", "Pix [4]", "Mumbuca [5]"]
         for forma in formas:
             tk.Radiobutton(frame_pagamento, text=forma, variable=self.pagamento, value=forma).pack(side="left", padx=2)
-    
+        self.cadastrarPedido.bind("1", lambda e: self.selecionar_pagamento("Credito [1]"))
+        self.cadastrarPedido.bind("2", lambda e: self.selecionar_pagamento("Debito [2]"))
+        self.cadastrarPedido.bind("3", lambda e: self.selecionar_pagamento("Dinheiro [3]"))
+        self.cadastrarPedido.bind("4", lambda e: self.selecionar_pagamento("Pix [4]"))
+        self.cadastrarPedido.bind("5", lambda e: self.selecionar_pagamento("Mumbuca [5]"))
+        
         tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=11, column=0)
         self.troco = tk.Entry(self.cadastrarPedido)
         self.troco.grid(row=11, column=1)
@@ -157,6 +166,16 @@ class Pedido:
         def acionar_voltar(_):
             botao_voltar.invoke()
         self.cadastrarPedido.bind("<Escape>", acionar_voltar)
+
+    def selecionar_tamanho(self, valor):
+        self.tamanho.set(valor)  
+        self.calcular_valor()
+
+    def selecionar_pagamento(self, valor):
+        self.pagamento.set(valor)  
+        self.calcular_valor()
+
+
 
 
     def preencher_dados_cliente(self, event):

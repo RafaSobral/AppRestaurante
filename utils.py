@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 import serial
+from datetime import datetime
+
+hoje = datetime.now().strftime("%d-%m-%Y")
 
 def imprimir_pedido_daruma(tree):
     selected = tree.selection()
@@ -134,8 +137,7 @@ def carregar_pedidos(tree, cursor):
     cursor.execute("""
         SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
                observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
-        FROM pedidos
-    """)
+        FROM pedidos  WHERE data_hoje LIKE ?""", (hoje,))
     
     for row in cursor.fetchall():
         row = list(row)

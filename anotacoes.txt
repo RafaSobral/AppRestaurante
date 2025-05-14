@@ -1,7 +1,3 @@
-1 - selecionar tamanho da marmita e forma de pagamento ao apertar um botao
-
-2 - Carregar apenas os pedidos do dia no iniciar 
-
 3 - funcao para imprimir uma comanda para o motoboy 
 
 (Verificar a dificuldade) funcao de multiplas marmitas e bebidas em uma mesma comanda
