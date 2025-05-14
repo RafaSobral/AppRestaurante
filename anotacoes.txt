@@ -1,7 +1,6 @@
+1 - Mostrar o total de vendas, taxa, troco e quantidade de marmitas vendidas
 
 2 - Funcao para imprimir uma comanda para o motoboy 
-
-3 - Funcao de multiplas marmitas e bebidas em uma mesma comanda
 
 4 - Criar grafico
 
@@ -17,9 +16,11 @@
 
 -------quem sabe no futuro:---------
 
-criar funcao de rota
+Funcao de multiplas marmitas e bebidas em uma mesma comanda
 
-criar funcao para enviar os pedidos para o celular do motoboy ou para uma tela na cozinha
+Criar funcao de rota
+
+Criar funcao para enviar os pedidos para o celular do motoboy ou para uma tela na cozinha
 
 
 
