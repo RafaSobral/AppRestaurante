@@ -19,6 +19,13 @@
 -------quem sabe no futuro:---------
 
 Funcao de multiplas marmitas e bebidas em uma mesma comanda
+<<<<<<< HEAD
+=======
+
+Criar funcao de rota
+
+Criar funcao para enviar os pedidos para o celular do motoboy ou para uma tela na cozinha
+>>>>>>> f12edcf4cc1e713e42a1877b49a0007bfe1b4884
 
 Criar funcao de rota
 
