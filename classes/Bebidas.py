@@ -1,6 +1,7 @@
 import sqlite3
 import tkinter as tk
 from tkinter import messagebox,ttk
+from estilizacao import botao_verde, botao_vermelho, botao_azul
 
 class Bebidas:
     def __init__(self):
@@ -46,13 +47,13 @@ class Bebidas:
         self.preco = tk.Entry(self.cadastrarBebidas)
         self.preco.grid(row=1, column=1)
 
-        botao_salvar = tk.Button(self.cadastrarBebidas, text="Salvar [Enter]", command=self.salvar_bebida)
+        botao_salvar = tk.Button(self.cadastrarBebidas, **botao_verde, text="Salvar [Enter]", command=self.salvar_bebida)
         botao_salvar.grid(row=6, column=0)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarBebidas.bind("<Return>", acionar_salvar)
         
-        botao_fechar = tk.Button(self.cadastrarBebidas, text="Fechar [Esc]", command=self.cadastrarBebidas.destroy)
+        botao_fechar = tk.Button(self.cadastrarBebidas, **botao_vermelho, text="Fechar [Esc]", command=self.cadastrarBebidas.destroy)
         botao_fechar.grid(row=7, column=0)
         def acionar_fechar(_):
             botao_fechar.invoke()
@@ -84,15 +85,15 @@ class Bebidas:
         for row in self.cursor.fetchall():
             self.tree.insert("", "end", values=row)
 
-        botao_editar = tk.Button(self.gerenciarBebidas, text="Editar [E]", command=self.editar_bebida)
+        botao_editar = tk.Button(self.gerenciarBebidas, **botao_verde, text="Editar [E]", command=self.editar_bebida)
         botao_editar.pack(side="left", padx=10, pady=10)
         self.gerenciarBebidas.bind("<Key-e>", lambda e: botao_editar.invoke())
 
-        botao_deletar = tk.Button(self.gerenciarBebidas, text="Deletar [Del]", command=self.deletar_bebida)
+        botao_deletar = tk.Button(self.gerenciarBebidas, **botao_vermelho, text="Deletar [Del]", command=self.deletar_bebida)
         botao_deletar.pack(side="left", padx=10, pady=10)
         self.gerenciarBebidas.bind("<Delete>", lambda e: botao_deletar.invoke())
 
-        botao_fechar = tk.Button(self.gerenciarBebidas, text="Fechar [Esc]", command=self.gerenciarBebidas.destroy)
+        botao_fechar = tk.Button(self.gerenciarBebidas, **botao_azul, text="Fechar [Esc]", command=self.gerenciarBebidas.destroy)
         botao_fechar.pack(side="left", padx=10, pady=10)
         self.gerenciarBebidas.bind("<Escape>", lambda e: botao_fechar.invoke())
 
@@ -147,7 +148,7 @@ class Bebidas:
             self.gerenciarBebidas.destroy()
             self.abrir_gerenciarBebidas()
 
-        botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
+        botao_salvar = tk.Button(janela_editar, **botao_verde, text="Salvar [Enter]", command=salvar_edicao)
         botao_salvar.pack(pady=10)
         def acionar_salvar(_):
             botao_salvar.invoke()

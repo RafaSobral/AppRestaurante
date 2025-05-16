@@ -3,6 +3,7 @@ import sqlite3
 import tkinter as tk
 from datetime import datetime
 from tkcalendar import DateEntry
+from estilizacao import botao_verde, botao_vermelho, botao_azul
 
 class Caixa:
     def __init__(self):
@@ -101,7 +102,7 @@ class Caixa:
             tk.Label(self.frame_conteudo, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
             tk.Label(self.frame_conteudo, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
 
-            botao_imprimir = tk.Button(self.frame_conteudo, text="Imprimir Fechamento [i]", command=lambda: self.imprimir_fechamento_caixa(
+            botao_imprimir = tk.Button(self.frame_conteudo, **botao_azul, text="Imprimir Fechamento [i]", command=lambda: self.imprimir_fechamento_caixa(
                 total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo,  bebidas_vendidas))
             botao_imprimir.pack(pady=10)
             def acionar_imprimir(event=None):
@@ -109,13 +110,13 @@ class Caixa:
             self.fecharCaixa.bind("<Key-i>", acionar_imprimir)
 
             
-        botao_confirmar = tk.Button(self.fecharCaixa, text="Confirmar Data [Enter]", command=obter_data)
+        botao_confirmar = tk.Button(self.fecharCaixa, **botao_verde, text="Confirmar Data [Enter]", command=obter_data)
         botao_confirmar.pack(pady=5)
         def acionar_confirmar(event=None):
             botao_confirmar.invoke()
         self.fecharCaixa.bind("<Return>", acionar_confirmar)
 
-        botao_sair = tk.Button(self.fecharCaixa, text="Sair [Esc]", command=self.fecharCaixa.destroy)
+        botao_sair = tk.Button(self.fecharCaixa, **botao_vermelho, text="Sair [Esc]", command=self.fecharCaixa.destroy)
         botao_sair.pack(pady=10)
         def acionar_sair(event=None):
             botao_sair.invoke()

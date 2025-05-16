@@ -4,6 +4,7 @@ import tkinter as tk
 from datetime import datetime
 from tkinter import messagebox,ttk
 from utils import carregar_pedidos
+from estilizacao import botao_verde, botao_vermelho
 
 
 
@@ -155,13 +156,13 @@ class Pedido:
         self.total = tk.StringVar()
         tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=13, column=1)
 
-        botao_salvar = tk.Button(self.cadastrarPedido, text="Salvar [Enter]", command=self.salvar_Pedido)
+        botao_salvar = tk.Button(self.cadastrarPedido, **botao_verde, text="Salvar [Enter]", command=self.salvar_Pedido)
         botao_salvar.grid(row=14, column=0)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarPedido.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPedido, text="Fechar [Esc]", command=self.cadastrarPedido.destroy)
+        botao_voltar = tk.Button(self.cadastrarPedido, **botao_vermelho, text="Fechar [Esc]", command=self.cadastrarPedido.destroy)
         botao_voltar.grid(row = 14, column = 1)
         def acionar_voltar(_):
             botao_voltar.invoke()
