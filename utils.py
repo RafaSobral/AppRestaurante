@@ -61,7 +61,7 @@ Data: {pedido['data_hoje']}
         messagebox.showerror("Erro na impressão", f"Erro: {e}")
 
 
-def editar_pedido(tree, cursor, conn, date_entry):
+def editar_pedido(tree, cursor, conn, date_entry, total_vendas_var, total_taxa_var, total_troco_var):
     selected = tree.selection()
     if not selected:
         messagebox.showwarning("Aviso", "Selecione um pedido para editar")
@@ -109,7 +109,8 @@ def editar_pedido(tree, cursor, conn, date_entry):
         messagebox.showinfo("Sucesso", "Pedido atualizado com sucesso")
         janela_editar.destroy()
         dia, mes, ano = obter_data(date_entry)
-        carregar_pedidos(tree, cursor, dia, mes, ano)
+        carregar_pedidos(tree, cursor, dia, mes, ano, total_vendas_var, total_taxa_var, total_troco_var)
+
 
     botao_salvar = tk.Button(janela_editar, text="Salvar [Enter]", command=salvar_edicao)
     botao_salvar.pack(pady=10)
@@ -132,56 +133,53 @@ def deletar_pedido(tree,cursor,conn):
         tree.delete(selected[0])
 
 
-def carregar_pedidos(tree, cursor, dia, mes, ano):
+def carregar_pedidos(tree, cursor, dia, mes, ano,
+                     total_vendas_var, total_taxa_var, total_troco_var):
+
     for i in tree.get_children():
         tree.delete(i)
 
     data_selecionada = f"{dia}-{mes}-{ano}"
 
     if dia in ['00', '0'] and mes in ['00', '0'] and ano in ['00', '0']:
-        cursor.execute("""
-            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
-            FROM pedidos
-        """)
+        cursor.execute("""SELECT * FROM pedidos""")
     elif dia in ['00', '0'] and mes in ['00', '0']:
-        data_like = f"{ano}"
-        cursor.execute("""
-            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
-            FROM pedidos WHERE data_hoje LIKE ?
-        """, (f"%{data_like}%",))
+        cursor.execute("""SELECT * FROM pedidos WHERE data_hoje LIKE ?""", (f"%{ano}%",))
     elif dia in ['00', '0']:
-        data_like = f"-{mes}-{ano}"
-        cursor.execute("""
-            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
-            FROM pedidos WHERE data_hoje LIKE ?
-        """, (f"%{data_like}%",))
-    elif data_selecionada == hoje:
-        
-        cursor.execute("""
-            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
-            FROM pedidos WHERE data_hoje LIKE ?
-        """, (data_selecionada,))
+        cursor.execute("""SELECT * FROM pedidos WHERE data_hoje LIKE ?""", (f"%-{mes}-{ano}",))
     else:
-        cursor.execute("""
-            SELECT id, pedido_id, nome_cliente, prato, acompanhamento1, acompanhamento2,
-                   observacao, tamanho, bebida, pagamento, troco, taxa, total, data_hoje 
-            FROM pedidos WHERE data_hoje LIKE ?
-        """, (data_selecionada,))
-    
+        cursor.execute("""SELECT * FROM pedidos WHERE data_hoje LIKE ?""", (data_selecionada,))
+
+    total_vendas = 0.0
+    total_taxa = 0.0
+    total_troco = 0.0
+
+    tamanho_map = {13: 'P', 15: 'M', 18: 'G'}
+
     for row in cursor.fetchall():
         row = list(row)
-        tamanho_map = {13: 'P', 15: 'M', 18: 'G'}
+
+        # Somatórios
         try:
-            valor = int(row[7])
-            row[7] = tamanho_map.get(valor, row[7])
+            total_vendas += float(row[12])
+            total_taxa += float(row[11])
+            total_troco += float(row[10])
         except (ValueError, TypeError):
             pass
-        
+
+        # Converte tamanho numérico para letra
+        try:
+            row[7] = tamanho_map.get(int(row[7]), row[7])
+        except (ValueError, TypeError):
+            pass
+
         tree.insert("", "end", values=row)
+
+    # Atualiza as labels de totais
+    total_vendas_var.set(f"Total Vendas: R$ {total_vendas:.2f}")
+    total_taxa_var.set(f"Total Taxa: R$ {total_taxa:.2f}")
+    total_troco_var.set(f"Total Troco: R$ {total_troco:.2f}")
+
 
 
 

@@ -1,3 +1,5 @@
+import tkinter as tk
+
 botao_azul = {
     "bg": "#9594CE",
     "fg": "white",
@@ -47,3 +49,16 @@ botao_vermelho = {
     "padx": 5,
     "pady": 2
 }
+
+botao_amarelo = {
+    "bg": "yellow",
+    "fg": "black",
+    "font": ("Helvetica", 8, "normal"),
+    "activebackground": "#45a049",
+    "activeforeground": "white",
+    "padx": 5,
+    "pady": 2
+}
+
+
+

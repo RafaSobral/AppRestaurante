@@ -30,6 +30,10 @@ class Pedido:
         self.nome_clientes = None
         self.bebida = None
         self.tree = None
+        self.total_vendas_var = tk.StringVar(value="Total Vendas: R$ 0,00")
+        self.total_taxa_var = tk.StringVar(value="Total Taxa: R$ 0,00")
+        self.total_troco_var = tk.StringVar(value="Total Troco: R$ 0,00")
+
         
 
         self.criar_tabela()
@@ -270,7 +274,8 @@ class Pedido:
         mes = agora.strftime("%m")
         ano = agora.strftime("%Y")
 
-        carregar_pedidos(self.tree, self.cursor, dia, mes, ano)
+        carregar_pedidos(self.tree, self.cursor, dia, mes, ano, self.total_vendas_var, self.total_taxa_var, self.total_troco_var)
+
 
 
 

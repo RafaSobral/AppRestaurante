@@ -1,6 +1,5 @@
 import sqlite3
 import tkinter as tk
-from estilizacao import *
 from tkinter import ttk
 from tkcalendar import DateEntry
 from classes.Prato import Prato
@@ -9,7 +8,9 @@ from classes.Pedido import Pedido
 from classes.Bebidas import Bebidas
 from classes.Cliente import Cliente
 from classes.Acompanhamento import Acompanhamento
-from utils import carregar_pedidos, deletar_pedido, editar_pedido, imprimir_pedido_daruma, obter_data 
+from estilizacao import botao_verde, botao_vermelho, botao_azul, botao_azulclaro, botao_laranja, botao_amarelo
+from utils import carregar_pedidos, deletar_pedido, editar_pedido, imprimir_pedido_daruma, obter_data
+
 
 conn = sqlite3.connect("bomapetite.db")
 cursor = conn.cursor()
@@ -17,7 +18,7 @@ cursor = conn.cursor()
 janela = tk.Tk()
 janela.title("Bom Apetite")
 janela.geometry("1360x500")
-janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
+#janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
 app_Cliente = Cliente() 
 app_Prato = Prato()
@@ -26,20 +27,59 @@ app_Acompanhamentos = Acompanhamento()
 app_Caixa = Caixa()
 app_Bebidas = Bebidas()
 
+total_vendas_var = tk.StringVar(value="Total Vendas: R$ 0,00")
+total_taxa_var = tk.StringVar(value="Total Taxa: R$ 0,00")
+total_troco_var = tk.StringVar(value="Total Troco: R$ 0,00")
 
 frame_data = tk.Frame(janela)
-frame_data.pack(pady=10, padx=10, anchor="nw")
+frame_data.pack(fill="x", pady=10, padx=10)
 
-date_entry = DateEntry(frame_data, width=12, background='darkblue', foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
-date_entry.pack(side='left', padx=(0, 10))  
+frame_esquerda = tk.Frame(frame_data)
+frame_esquerda.pack(side="left")
 
-botao_confirmar = tk.Button(frame_data, text="Confirmar Data [Enter]", **botao_verde, command=lambda: carregar_pedidos(tree, cursor, *obter_data(date_entry)))
-botao_confirmar.pack(side='left')
-def acionar_confirmar(_):
+date_entry = DateEntry(frame_esquerda, width=12, background='darkblue', foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
+date_entry.pack(side="left", padx=(0, 10))
+
+botao_confirmar = tk.Button(
+    frame_esquerda,
+    text="Confirmar Data [Enter]",
+    **botao_verde,
+    command=lambda: carregar_pedidos(
+        tree, cursor, *obter_data(date_entry),
+        total_vendas_var, total_taxa_var, total_troco_var
+    )
+)
+
+botao_confirmar.pack(side="left")
+
+def acionar_confirmar(event):
     botao_confirmar.invoke()
-janela.bind("<Return>", acionar_confirmar)
 
-tk.Label(frame_data, text="    Para ver os pedidos:   Do mes: 00/mes/ano,   Do ano: 00/00/ano,   Todos os pedidos: 00/00/00").pack()
+janela.bind("<FocusIn>", acionar_confirmar)
+
+
+label_instrucao = tk.Label(frame_esquerda, text="Para ver os pedidos:   Do mês: 00/mês/ano,   Do ano: 00/00/ano,   Todos os pedidos: 00/00/00")
+label_instrucao.pack(side="left", padx=(10, 0))
+
+frame_direita = tk.Frame(frame_data)
+frame_direita.pack(side="right")
+
+# tipo de borda: raised, sunken, groove, ridge, flat, solid
+
+botao_info = tk.Button(frame_direita, **botao_amarelo, text="Info[i]")
+botao_info.pack(side="left", padx=5)
+
+label_total_troco = tk.Label(frame_direita, textvariable=total_troco_var, anchor="e", bg="green", fg="white", relief="sunken", borderwidth=3, padx=10, pady=5)
+label_total_troco.pack(side="left", padx=5)
+
+label_total_taxa = tk.Label(frame_direita, textvariable=total_taxa_var, anchor="e", bg="green", fg="white", relief="sunken", borderwidth=3, padx=10, pady=5)
+label_total_taxa.pack(side="left", padx=5)
+
+label_total_vendas = tk.Label(frame_direita, textvariable=total_vendas_var, anchor="e", bg="green", fg="white", relief="sunken", borderwidth=3, padx=10, pady=5)
+label_total_vendas.pack(side="left", padx=5)
+
+
+
 
 tree = ttk.Treeview(
     janela,
@@ -92,54 +132,54 @@ tree.column("Data:", width=60)
 
 tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-carregar_pedidos(tree, cursor, *obter_data(date_entry))
+carregar_pedidos(tree, cursor, *obter_data(date_entry), total_vendas_var, total_taxa_var, total_troco_var)
     
 frame_botoes = tk.Frame(janela)
 frame_botoes.pack(fill="x", padx=10, pady=10)
 
-botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerir Clientes [1]", **botao_azulclaro, command=app_Cliente.abrir_gerenciarClientes)
+botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerir Clientes [1]", **botao_azul, command=app_Cliente.abrir_gerenciarClientes)
 botao_gerenciarClientes.pack(side="left", padx=5)
 janela.bind("1", lambda e: botao_gerenciarClientes.invoke())
 
-botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerir Pratos [2]", **botao_azulclaro, command=app_Prato.abrir_gerenciarPratos)
+botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerir Pratos [2]", **botao_azul, command=app_Prato.abrir_gerenciarPratos)
 botao_gerenciarPratos.pack(side="left", padx=5)
 janela.bind("2", lambda e: botao_gerenciarPratos.invoke())
 
-botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerir Acomp [3]", **botao_azulclaro, command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
+botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerir Acomp [3]", **botao_azul, command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
 botao_gerenciarAcompanhamentos.pack(side="left", padx=5)
 janela.bind("3", lambda e: botao_gerenciarAcompanhamentos.invoke())
 
-botao_gerenciarBebidas = tk.Button(frame_botoes, text="Gerir Bebidas [4]", **botao_azulclaro, command=app_Bebidas.abrir_gerenciarBebidas)
+botao_gerenciarBebidas = tk.Button(frame_botoes, text="Gerir Bebidas [4]", **botao_azul, command=app_Bebidas.abrir_gerenciarBebidas)
 botao_gerenciarBebidas.pack(side="left", padx=5)
 janela.bind("4", lambda e: botao_gerenciarBebidas.invoke())
 
-botao_cadastrarBebidas = tk.Button(frame_botoes, text="Criar Bebidas [5]", **botao_azul, command=app_Bebidas.abrir_cadastrarBebidas)
+botao_cadastrarBebidas = tk.Button(frame_botoes, text="Criar Bebidas [5]", **botao_azulclaro, command=app_Bebidas.abrir_cadastrarBebidas)
 botao_cadastrarBebidas.pack(side="left", padx=5)
 janela.bind("5", lambda e: botao_cadastrarBebidas.invoke())
 
-botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido [6]", **botao_azul, command=lambda: app_Pedido.abrir_cadastrarPedido(tree=tree))
+botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido [6]", **botao_azulclaro, command=lambda: app_Pedido.abrir_cadastrarPedido(tree=tree))
 botao_cadastrarPedidos.pack(side="left", padx=5)
 janela.bind("6", lambda e: botao_cadastrarPedidos.invoke())
 
-botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente [7]", **botao_azul, command=app_Cliente.abrir_cadastrarCliente)
+botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente [7]", **botao_azulclaro, command=app_Cliente.abrir_cadastrarCliente)
 botao_cadastrarCliente.pack(side="left", padx=5)
 janela.bind("7", lambda e: botao_cadastrarCliente.invoke())
 
-botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos [8]", **botao_azul, command=app_Prato.abrir_cadastrarPratos)
+botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos [8]", **botao_azulclaro, command=app_Prato.abrir_cadastrarPratos)
 botao_cadastrarPratos.pack(side="left", padx=5)
 janela.bind("8", lambda e: botao_cadastrarPratos.invoke())
 
-botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp [9]", **botao_azul, command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
+botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp [9]", **botao_azulclaro, command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
 botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
 janela.bind("9", lambda e: botao_cadastrarAcompanhamentos.invoke())
 
-botao_deletar = tk.Button(frame_botoes, text="Deletar [Del]", **botao_vermelho, command=lambda: deletar_pedido(tree, cursor, conn))
+botao_deletar = tk.Button(frame_botoes, text="Deletar [Del]", **botao_vermelho,  command=lambda: deletar_pedido(tree, cursor, conn))
 botao_deletar.pack(side="right", padx=5, pady=10)
 def acionar_deletar(_):
     botao_deletar.invoke()
 janela.bind("<Delete>", acionar_deletar)
 
-botao_editar = tk.Button(frame_botoes, text="Editar [E]", **botao_laranja, command=lambda: editar_pedido(tree, cursor, conn, date_entry))
+botao_editar = tk.Button(frame_botoes, text="Editar [E]", **botao_laranja, command=lambda: editar_pedido(tree, cursor, conn, date_entry, total_vendas_var, total_taxa_var, total_troco_var))
 botao_editar.pack(side="right", padx=5, pady=10)
 def acionar_editar(_):
     botao_editar.invoke()

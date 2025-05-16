@@ -1,12 +1,12 @@
-1 - Mostrar o total de vendas, taxa, troco e quantidade de marmitas vendidas
-
-2 - Funcao para imprimir uma comanda para o motoboy 
+Ajeitar a label dos totais 
+criar botao info
+tirar os numeros da forma de pagamento
+tirar os numeros e letras dos botoes 
+label dos totais nao esta sendo atualizada ao cadastrar um pedido
 
 4 - Criar grafico
 
-5 - Trabalhar no design da interface 
-
-  - Dark mode
+2 - Funcao para imprimir uma comanda para o motoboy 
 
 6 - Pesquisar como organizar melhor o codigo, solid e clean code
 
@@ -19,13 +19,6 @@
 -------quem sabe no futuro:---------
 
 Funcao de multiplas marmitas e bebidas em uma mesma comanda
-<<<<<<< HEAD
-=======
-
-Criar funcao de rota
-
-Criar funcao para enviar os pedidos para o celular do motoboy ou para uma tela na cozinha
->>>>>>> f12edcf4cc1e713e42a1877b49a0007bfe1b4884
 
 Criar funcao de rota
 
