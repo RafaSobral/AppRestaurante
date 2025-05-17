@@ -9,16 +9,16 @@ from classes.Bebidas import Bebidas
 from classes.Cliente import Cliente
 from classes.Acompanhamento import Acompanhamento
 from estilizacao import botao_verde, botao_vermelho, botao_azul, botao_azulclaro, botao_laranja, botao_amarelo
-from utils import carregar_pedidos, deletar_pedido, editar_pedido, imprimir_pedido_daruma, obter_data
+from utils import carregar_pedidos, deletar_pedido, editar_pedido, imprimir_pedido_daruma, obter_data, abrir_info
 
 
 conn = sqlite3.connect("bomapetite.db")
 cursor = conn.cursor()
 
 janela = tk.Tk()
-janela.title("Bom Apetite")
+janela.title("Bom Apetite - Clique no botão de ajuda para visualizar as teclas de atalho")
 janela.geometry("1360x500")
-#janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
+janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
 app_Cliente = Cliente() 
 app_Prato = Prato()
@@ -42,7 +42,7 @@ date_entry.pack(side="left", padx=(0, 10))
 
 botao_confirmar = tk.Button(
     frame_esquerda,
-    text="Confirmar Data [Enter]",
+    text="Confirmar Data",
     **botao_verde,
     command=lambda: carregar_pedidos(
         tree, cursor, *obter_data(date_entry),
@@ -54,8 +54,8 @@ botao_confirmar.pack(side="left")
 
 def acionar_confirmar(event):
     botao_confirmar.invoke()
-
 janela.bind("<FocusIn>", acionar_confirmar)
+janela.bind("<Return>", acionar_confirmar)
 
 
 label_instrucao = tk.Label(frame_esquerda, text="Para ver os pedidos:   Do mês: 00/mês/ano,   Do ano: 00/00/ano,   Todos os pedidos: 00/00/00")
@@ -64,10 +64,9 @@ label_instrucao.pack(side="left", padx=(10, 0))
 frame_direita = tk.Frame(frame_data)
 frame_direita.pack(side="right")
 
-# tipo de borda: raised, sunken, groove, ridge, flat, solid
-
-botao_info = tk.Button(frame_direita, **botao_amarelo, text="Info[i]")
+botao_info = tk.Button(frame_direita, **botao_amarelo, text="Ajuda", command=abrir_info)
 botao_info.pack(side="left", padx=5)
+janela.bind("<equal>", lambda e: botao_info.invoke())
 
 label_total_troco = tk.Label(frame_direita, textvariable=total_troco_var, anchor="e", bg="green", fg="white", relief="sunken", borderwidth=3, padx=10, pady=5)
 label_total_troco.pack(side="left", padx=5)
@@ -137,62 +136,64 @@ carregar_pedidos(tree, cursor, *obter_data(date_entry), total_vendas_var, total_
 frame_botoes = tk.Frame(janela)
 frame_botoes.pack(fill="x", padx=10, pady=10)
 
-botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerir Clientes [1]", **botao_azul, command=app_Cliente.abrir_gerenciarClientes)
+botao_gerenciarClientes = tk.Button(frame_botoes, text="Gerir Clientes", **botao_azul, command=app_Cliente.abrir_gerenciarClientes)
 botao_gerenciarClientes.pack(side="left", padx=5)
-janela.bind("1", lambda e: botao_gerenciarClientes.invoke())
+janela.bind("<F1>", lambda e: botao_gerenciarClientes.invoke())
 
-botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerir Pratos [2]", **botao_azul, command=app_Prato.abrir_gerenciarPratos)
+botao_gerenciarPratos = tk.Button(frame_botoes, text="Gerir Pratos", **botao_azul, command=app_Prato.abrir_gerenciarPratos)
 botao_gerenciarPratos.pack(side="left", padx=5)
-janela.bind("2", lambda e: botao_gerenciarPratos.invoke())
+janela.bind("<F2>", lambda e: botao_gerenciarPratos.invoke())
 
-botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerir Acomp [3]", **botao_azul, command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
+botao_gerenciarAcompanhamentos = tk.Button(frame_botoes, text="Gerir Acomp", **botao_azul, command=app_Acompanhamentos.abrir_gerenciarAcompanhamentos)
 botao_gerenciarAcompanhamentos.pack(side="left", padx=5)
-janela.bind("3", lambda e: botao_gerenciarAcompanhamentos.invoke())
+janela.bind("<F3>", lambda e: botao_gerenciarAcompanhamentos.invoke())
 
-botao_gerenciarBebidas = tk.Button(frame_botoes, text="Gerir Bebidas [4]", **botao_azul, command=app_Bebidas.abrir_gerenciarBebidas)
+botao_gerenciarBebidas = tk.Button(frame_botoes, text="Gerir Bebidas", **botao_azul, command=app_Bebidas.abrir_gerenciarBebidas)
 botao_gerenciarBebidas.pack(side="left", padx=5)
-janela.bind("4", lambda e: botao_gerenciarBebidas.invoke())
+janela.bind("<F4>", lambda e: botao_gerenciarBebidas.invoke())
 
-botao_cadastrarBebidas = tk.Button(frame_botoes, text="Criar Bebidas [5]", **botao_azulclaro, command=app_Bebidas.abrir_cadastrarBebidas)
+botao_cadastrarBebidas = tk.Button(frame_botoes, text="Criar Bebidas", **botao_azulclaro, command=app_Bebidas.abrir_cadastrarBebidas)
 botao_cadastrarBebidas.pack(side="left", padx=5)
-janela.bind("5", lambda e: botao_cadastrarBebidas.invoke())
+janela.bind("<F5>", lambda e: botao_cadastrarBebidas.invoke())
 
-botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido [6]", **botao_azulclaro, command=lambda: app_Pedido.abrir_cadastrarPedido(tree=tree))
+botao_cadastrarPedidos = tk.Button(frame_botoes, text="Criar Pedido", **botao_azulclaro, command=lambda: app_Pedido.abrir_cadastrarPedido(tree=tree))
 botao_cadastrarPedidos.pack(side="left", padx=5)
-janela.bind("6", lambda e: botao_cadastrarPedidos.invoke())
+janela.bind("<F6>", lambda e: botao_cadastrarPedidos.invoke())
 
-botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente [7]", **botao_azulclaro, command=app_Cliente.abrir_cadastrarCliente)
+botao_cadastrarCliente = tk.Button(frame_botoes, text="Criar Cliente", **botao_azulclaro, command=app_Cliente.abrir_cadastrarCliente)
 botao_cadastrarCliente.pack(side="left", padx=5)
-janela.bind("7", lambda e: botao_cadastrarCliente.invoke())
+janela.bind("<F7>", lambda e: botao_cadastrarCliente.invoke())
 
-botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos [8]", **botao_azulclaro, command=app_Prato.abrir_cadastrarPratos)
+botao_cadastrarPratos = tk.Button(frame_botoes, text="Criar Pratos", **botao_azulclaro, command=app_Prato.abrir_cadastrarPratos)
 botao_cadastrarPratos.pack(side="left", padx=5)
-janela.bind("8", lambda e: botao_cadastrarPratos.invoke())
+janela.bind("<F8>", lambda e: botao_cadastrarPratos.invoke())
 
-botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp [9]", **botao_azulclaro, command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
+botao_cadastrarAcompanhamentos = tk.Button(frame_botoes, text="Criar Acomp", **botao_azulclaro, command=app_Acompanhamentos.abrir_cadastrarAcompanhamentos)
 botao_cadastrarAcompanhamentos.pack(side="left", padx=5)
-janela.bind("9", lambda e: botao_cadastrarAcompanhamentos.invoke())
+janela.bind("<F9>", lambda e: botao_cadastrarAcompanhamentos.invoke())
 
-botao_deletar = tk.Button(frame_botoes, text="Deletar [Del]", **botao_vermelho,  command=lambda: deletar_pedido(tree, cursor, conn))
+
+botao_deletar = tk.Button(frame_botoes, text="Deletar", **botao_vermelho,  command=lambda: deletar_pedido(tree, cursor, conn))
 botao_deletar.pack(side="right", padx=5, pady=10)
 def acionar_deletar(_):
     botao_deletar.invoke()
 janela.bind("<Delete>", acionar_deletar)
 
-botao_editar = tk.Button(frame_botoes, text="Editar [E]", **botao_laranja, command=lambda: editar_pedido(tree, cursor, conn, date_entry, total_vendas_var, total_taxa_var, total_troco_var))
+botao_editar = tk.Button(frame_botoes, text="Editar", **botao_laranja, command=lambda: editar_pedido(tree, cursor, conn, date_entry, total_vendas_var, total_taxa_var, total_troco_var))
 botao_editar.pack(side="right", padx=5, pady=10)
 def acionar_editar(_):
     botao_editar.invoke()
-janela.bind("<Key-e>", acionar_editar)
+janela.bind("<F12>", acionar_editar)  
 
-btn_imprimir = tk.Button(frame_botoes, text="Re-imprimir [i]", **botao_laranja, command=lambda: imprimir_pedido_daruma(tree))
+btn_imprimir = tk.Button(frame_botoes, text="Re-imprimir", **botao_laranja, command=lambda: imprimir_pedido_daruma(tree))
 btn_imprimir.pack(side="right", padx=5, pady=10)
 def acionar_imprimir(_):
     btn_imprimir.invoke()
-janela.bind("<Key-i>", acionar_imprimir)
+janela.bind("<F11>", acionar_imprimir)  
 
-botao_fecharCaixa = tk.Button(frame_botoes, text="Caixa [C]", **botao_laranja, command=app_Caixa.abrir_fecharCaixa)
+botao_fecharCaixa = tk.Button(frame_botoes, text="Caixa", **botao_laranja, command=app_Caixa.abrir_fecharCaixa)
 botao_fecharCaixa.pack(side="right", padx=5)
-janela.bind("<Key-c>", lambda e: botao_fecharCaixa.invoke())
+janela.bind("<F10>", lambda e: botao_fecharCaixa.invoke())  
+
 
 janela.mainloop()

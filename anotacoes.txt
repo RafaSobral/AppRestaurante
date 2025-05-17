@@ -1,20 +1,14 @@
-Ajeitar a label dos totais 
-criar botao info
-tirar os numeros da forma de pagamento
-tirar os numeros e letras dos botoes 
-label dos totais nao esta sendo atualizada ao cadastrar um pedido
-
-4 - Criar grafico
-
 2 - Funcao para imprimir uma comanda para o motoboy 
 
-6 - Pesquisar como organizar melhor o codigo, solid e clean code
+3 - Criar grafico
 
-7 - Estudar algumas linhas de codigo da classe pedido e caixa que nao entendi completamente
+4 - Pesquisar como organizar melhor o codigo, solid e clean code
 
-8 - Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
+5 - Estudar algumas linhas de codigo da classe pedido e caixa que nao entendi completamente
 
-9 - atualizar documentacao
+6 - Estudar os metodos de conexao com banco de dados: self.conexao.commit, self.cursor.execute e outros
+
+7 - atualizar documentacao
 
 -------quem sabe no futuro:---------
 

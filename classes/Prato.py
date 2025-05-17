@@ -61,13 +61,13 @@ class Prato:
         self.descricao = tk.Entry(self.cadastrarPratos)
         self.descricao.grid(row=1,column=1)
 
-        botao_salvar = tk.Button(self.cadastrarPratos, **botao_verde, text="Salvar [Enter]", command=self.salvar_prato)
+        botao_salvar = tk.Button(self.cadastrarPratos, **botao_verde, text="Salvar", command=self.salvar_prato)
         botao_salvar.grid(row=6, column=0)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarPratos.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPratos, **botao_vermelho, text="Fechar [Esc]", command=self.cadastrarPratos.destroy)
+        botao_voltar = tk.Button(self.cadastrarPratos, **botao_vermelho, text="Fechar", command=self.cadastrarPratos.destroy)
         botao_voltar.grid(row=7, column=0)
         def acionar_voltar(_):
             botao_voltar.invoke()
@@ -95,15 +95,15 @@ class Prato:
         for row in self.cursor.fetchall():
             self.tree.insert("", "end", values=row)
 
-        botao_editar = tk.Button(self.gerenciarPratos, **botao_verde, text="Editar [E]", command=self.editar_prato)
+        botao_editar = tk.Button(self.gerenciarPratos, **botao_verde, text="Editar", command=self.editar_prato)
         botao_editar.pack(side="left", padx=10, pady=10)
-        self.gerenciarPratos.bind("<Key-e>", lambda e: botao_editar.invoke())
+        self.gerenciarPratos.bind("-", lambda e: botao_editar.invoke())
 
-        botao_deletar = tk.Button(self.gerenciarPratos, **botao_vermelho, text="Deletar [DEL]", command=self.deletar_prato)
+        botao_deletar = tk.Button(self.gerenciarPratos, **botao_vermelho, text="Deletar", command=self.deletar_prato)
         botao_deletar.pack(side="left", padx=10, pady=10)
         self.gerenciarPratos.bind("<Delete>", lambda e: botao_deletar.invoke())
 
-        botao_sair = tk.Button(self.gerenciarPratos, **botao_azul, text="Sair [Esc]", command=self.gerenciarPratos.destroy)
+        botao_sair = tk.Button(self.gerenciarPratos, **botao_azul, text="Sair", command=self.gerenciarPratos.destroy)
         botao_sair.pack(side="left", padx=10, pady=10)
         self.gerenciarPratos.bind("<Escape>", lambda e: botao_sair.invoke())
 
@@ -140,7 +140,7 @@ class Prato:
             self.gerenciarPratos.destroy()
             self.abrir_gerenciarPratos()
 
-        botao_salvar = tk.Button(janela_editar, **botao_verde, text="Salvar [Enter]", command=salvar_edicao)
+        botao_salvar = tk.Button(janela_editar, **botao_verde, text="Salvar", command=salvar_edicao)
         botao_salvar.pack(pady=10)
         def acionar_salvar(_):
             botao_salvar.invoke()

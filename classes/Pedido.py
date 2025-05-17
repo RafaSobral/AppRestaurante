@@ -138,14 +138,14 @@ class Pedido:
         frame_pagamento = tk.Frame(self.cadastrarPedido)
         frame_pagamento.grid(row=10, column=1, columnspan=5, sticky="w")  
 
-        formas = ["Credito [1]", "Debito [2]", "Dinheiro [3]", "Pix [4]", "Mumbuca [5]"]
+        formas = ["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
         for forma in formas:
             tk.Radiobutton(frame_pagamento, text=forma, variable=self.pagamento, value=forma).pack(side="left", padx=2)
-        self.cadastrarPedido.bind("1", lambda e: self.selecionar_pagamento("Credito [1]"))
-        self.cadastrarPedido.bind("2", lambda e: self.selecionar_pagamento("Debito [2]"))
-        self.cadastrarPedido.bind("3", lambda e: self.selecionar_pagamento("Dinheiro [3]"))
-        self.cadastrarPedido.bind("4", lambda e: self.selecionar_pagamento("Pix [4]"))
-        self.cadastrarPedido.bind("5", lambda e: self.selecionar_pagamento("Mumbuca [5]"))
+        self.cadastrarPedido.bind("1", lambda e: self.selecionar_pagamento("Credito"))
+        self.cadastrarPedido.bind("2", lambda e: self.selecionar_pagamento("Debito"))
+        self.cadastrarPedido.bind("3", lambda e: self.selecionar_pagamento("Dinheiro"))
+        self.cadastrarPedido.bind("4", lambda e: self.selecionar_pagamento("Pix"))
+        self.cadastrarPedido.bind("5", lambda e: self.selecionar_pagamento("Mumbuca"))
         
         tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=11, column=0)
         self.troco = tk.Entry(self.cadastrarPedido)
@@ -160,13 +160,13 @@ class Pedido:
         self.total = tk.StringVar()
         tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=13, column=1)
 
-        botao_salvar = tk.Button(self.cadastrarPedido, **botao_verde, text="Salvar [Enter]", command=self.salvar_Pedido)
+        botao_salvar = tk.Button(self.cadastrarPedido, **botao_verde, text="Salvar", command=self.salvar_Pedido)
         botao_salvar.grid(row=14, column=0)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarPedido.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPedido, **botao_vermelho, text="Fechar [Esc]", command=self.cadastrarPedido.destroy)
+        botao_voltar = tk.Button(self.cadastrarPedido, **botao_vermelho, text="Fechar", command=self.cadastrarPedido.destroy)
         botao_voltar.grid(row = 14, column = 1)
         def acionar_voltar(_):
             botao_voltar.invoke()

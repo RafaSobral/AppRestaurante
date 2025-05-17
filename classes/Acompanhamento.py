@@ -52,13 +52,13 @@ class Acompanhamento:
         self.acomp.focus_set()
         self.acomp.grid(row=0, column=1)
 
-        botao_Salvar = tk.Button(self.cadastrarAcomp, **botao_verde, text="Salvar [Enter]", command=self.salvar_Acompanhamento)
+        botao_Salvar = tk.Button(self.cadastrarAcomp, **botao_verde, text="Salvar", command=self.salvar_Acompanhamento)
         botao_Salvar.grid(row=1, column=0)
         def acionar_salvar(_):
             botao_Salvar.invoke()
         self.cadastrarAcomp.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarAcomp, **botao_vermelho, text="Fechar [Esc]", command=self.cadastrarAcomp.destroy)
+        botao_voltar = tk.Button(self.cadastrarAcomp, **botao_vermelho, text="Fechar", command=self.cadastrarAcomp.destroy)
         botao_voltar.grid(row = 2, column = 0)
         def acionar_voltar(_):
             botao_voltar.invoke()
@@ -87,15 +87,15 @@ class Acompanhamento:
         for row in self.cursor.fetchall():
             self.tree.insert("", "end", values=row)
 
-        botao_editar = tk.Button(self.gerenciarAcomp, **botao_verde, text="Editar [E]", command=self.editar_acompanhamento)
+        botao_editar = tk.Button(self.gerenciarAcomp, **botao_verde, text="Editar", command=self.editar_acompanhamento)
         botao_editar.pack(side="left", padx=10, pady=10)
-        self.gerenciarAcomp.bind("<Key-e>", lambda e: botao_editar.invoke())
+        self.gerenciarAcomp.bind("-", lambda e: botao_editar.invoke())
 
-        botao_deletar = tk.Button(self.gerenciarAcomp, **botao_vermelho, text="Deletar [DEL]", command=self.deletar_acompanhamento)
+        botao_deletar = tk.Button(self.gerenciarAcomp, **botao_vermelho, text="Deletar", command=self.deletar_acompanhamento)
         botao_deletar.pack(side="left", padx=10, pady=10)
         self.gerenciarAcomp.bind("<Delete>", lambda e: botao_deletar.invoke())
 
-        botao_sair = tk.Button(self.gerenciarAcomp, **botao_azul, text="Sair [Esc]", command=self.gerenciarAcomp.destroy)
+        botao_sair = tk.Button(self.gerenciarAcomp, **botao_azul, text="Sair", command=self.gerenciarAcomp.destroy)
         botao_sair.pack(side="left", padx=10, pady=10)
         self.gerenciarAcomp.bind("<Escape>", lambda e: botao_sair.invoke())
 
@@ -127,7 +127,7 @@ class Acompanhamento:
             self.gerenciarAcomp.destroy()
             self.abrir_gerenciarAcompanhamentos()
 
-        botao_salvar = tk.Button(janela_editar, **botao_verde, text="Salvar [Enter]", command=salvar_edicao)
+        botao_salvar = tk.Button(janela_editar, **botao_verde, text="Salvar", command=salvar_edicao)
         botao_salvar.pack(pady=10)
         def acionar_salvar(_):
             botao_salvar.invoke()

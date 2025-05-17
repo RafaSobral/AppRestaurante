@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import font
 from tkinter import messagebox
 import serial
 from datetime import datetime
@@ -130,7 +131,7 @@ def deletar_pedido(tree,cursor,conn):
         cursor.execute("DELETE FROM pedidos WHERE id=?", (id_real,))
         conn.commit()
         messagebox.showinfo("Sucesso", "Pedido deletado com sucesso")
-        tree.delete(selected[0])
+        
 
 
 def carregar_pedidos(tree, cursor, dia, mes, ano,
@@ -189,9 +190,98 @@ def obter_data(date_entry):
     return  dia, mes, ano
 
 
+def abrir_info():
+    manual_janela = tk.Toplevel()
+    manual_janela.title("Manual de Teclas Rápidas")
+    manual_janela.geometry("420x520")
+    manual_janela.resizable(False, False)
+    manual_janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
+    fonte_titulo = font.Font(family="Helvetica", size=10, weight="bold")
+    fonte_mono = font.Font(family="Courier", size=10)
 
+    # Canvas com Scrollbar
+    canvas = tk.Canvas(manual_janela)
+    scrollbar = tk.Scrollbar(manual_janela, orient="vertical", command=canvas.yview)
+    frame_scroll = tk.Frame(canvas)
 
+    frame_scroll.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=frame_scroll, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    def adicionar_secao(titulo, conteudo):
+        label_titulo = tk.Label(frame_scroll, text=titulo, font=fonte_titulo, anchor="w", bg="green", fg="white", relief="sunken", borderwidth=3, padx=10, pady=5)
+        label_titulo.pack(fill="x", padx=15, pady=(10, 0))
+
+        label_conteudo = tk.Label(frame_scroll, text=conteudo, font=fonte_mono, justify="left", anchor="w")
+        label_conteudo.pack(fill="x", padx=30, pady=(0, 5))
+
+    adicionar_secao("[Atalhos de Gerenciamento]", """\
+F1  → Gerir Clientes
+F2  → Gerir Pratos
+F3  → Gerir Acompanhamentos
+F4  → Gerir Bebidas
+ENTER    → Salvar
+ESC      → Sair
+DELETE   → Apagar
+-(Menos) → Editar                                        """)
+
+    adicionar_secao("[Atalhos de Cadastro]", """\
+ENTER    → Salvar
+ESC      → Sair
+F5  → Criar Bebidas
+F6  → Criar Pedido
+F7  → Criar Cliente
+F8  → Criar Pratos
+F9  → Criar Acompanhamentos""")
+
+    adicionar_secao("[Ações Rápidas]", """\
+Nos Sub-Menus utilize a tecla Enter para
+salvar, tecla ESC para sair do menu 
+                    
+F12         → Editar Pedido Selecionado
+F11         → Re-imprimir Pedido
+F10         → Abrir Caixa
+DELETE      → Apagar Pedido Selecionado
+= (Igual)   → Abrir o menu de ajuda""")
+
+    adicionar_secao("[Cadastro de Pedido]", """\
+Número 1    → Selecionar Crédito
+Número 2    → Selecionar Débito
+Número 3    → Selecionar Dinheiro
+Número 4    → Selecionar Pix
+Número 5    → Selecionar Mumbuca
+                    
+Letra P     → Selecionar marmita Pequena
+Letra M     → Selecionar marmita Média
+Letra G     → Selecionar marmita Grande
+                    
+Navegue pela tela de cadastro de pedido
+com a tecla TAB, ao selecionar uma lista
+(clientes, pratos, acompanhamentos ou bebidas)
+utilize a seta para baixo para abrir a lista, 
+após aberta é possivel navegar utilizando 
+a seta para cima ou para baixo""")
+    
+    adicionar_secao("[Menu do Caixa]", """\
+Enter       → Confirmar Data
+ESC         → Sair do Menu
+-(Menos)    → Imprimir fechamento""")
+
+    adicionar_secao("[Outros Comandos]", """\
+Enter       → Confirmar a Data no menu inicial
+Tab         → Navegar entre campos
+Shift + Tab → Navegar para trás""")
+    
 
 
     
