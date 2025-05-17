@@ -1,8 +1,10 @@
 import locale
 import sqlite3
+import serial
 import tkinter as tk
 from datetime import datetime
 from tkcalendar import DateEntry
+from tkinter import messagebox
 from estilizacao import botao_verde, botao_vermelho, botao_azul
 
 class Caixa:

@@ -194,22 +194,26 @@ def abrir_info():
     manual_janela = tk.Toplevel()
     manual_janela.title("Manual de Teclas Rápidas")
     manual_janela.geometry("420x520")
+    manual_janela.focus_force()
     manual_janela.resizable(False, False)
     manual_janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
     fonte_titulo = font.Font(family="Helvetica", size=10, weight="bold")
     fonte_mono = font.Font(family="Courier", size=10)
 
-    # Canvas com Scrollbar
-    canvas = tk.Canvas(manual_janela)
-    scrollbar = tk.Scrollbar(manual_janela, orient="vertical", command=canvas.yview)
+    frame_principal = tk.Frame(manual_janela)
+    frame_principal.pack(fill="both", expand=True)
+
+    frame_conteudo = tk.Frame(frame_principal)
+    frame_conteudo.pack(fill="both", expand=True)
+
+    canvas = tk.Canvas(frame_conteudo)
+    scrollbar = tk.Scrollbar(frame_conteudo, orient="vertical", command=canvas.yview)
     frame_scroll = tk.Frame(canvas)
 
     frame_scroll.bind(
         "<Configure>",
-        lambda e: canvas.configure(
-            scrollregion=canvas.bbox("all")
-        )
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
     )
 
     canvas.create_window((0, 0), window=frame_scroll, anchor="nw")
@@ -225,6 +229,7 @@ def abrir_info():
         label_conteudo = tk.Label(frame_scroll, text=conteudo, font=fonte_mono, justify="left", anchor="w")
         label_conteudo.pack(fill="x", padx=30, pady=(0, 5))
 
+ 
     adicionar_secao("[Atalhos de Gerenciamento]", """\
 F1  → Gerir Clientes
 F2  → Gerir Pratos
@@ -233,7 +238,7 @@ F4  → Gerir Bebidas
 ENTER    → Salvar
 ESC      → Sair
 DELETE   → Apagar
--(Menos) → Editar                                        """)
+-(Menos) → Editar""")
 
     adicionar_secao("[Atalhos de Cadastro]", """\
 ENTER    → Salvar
@@ -269,9 +274,9 @@ Navegue pela tela de cadastro de pedido
 com a tecla TAB, ao selecionar uma lista
 (clientes, pratos, acompanhamentos ou bebidas)
 utilize a seta para baixo para abrir a lista, 
-após aberta é possivel navegar utilizando 
+após aberta é possível navegar utilizando 
 a seta para cima ou para baixo""")
-    
+
     adicionar_secao("[Menu do Caixa]", """\
 Enter       → Confirmar Data
 ESC         → Sair do Menu
@@ -281,7 +286,24 @@ ESC         → Sair do Menu
 Enter       → Confirmar a Data no menu inicial
 Tab         → Navegar entre campos
 Shift + Tab → Navegar para trás""")
-    
 
 
-    
+    frame_baixo = tk.Frame(frame_principal)
+    frame_baixo.pack(side="bottom", fill="x", pady=10)
+
+    botao_sair = tk.Button(
+    frame_baixo,
+    bg="#FF0000",
+    fg="white",
+    font=("Helvetica", 8, "normal"),
+    activebackground="#45a049",
+    activeforeground="white",
+    padx=5,
+    pady=2,
+    text="Sair",
+    command=manual_janela.destroy
+    )
+    botao_sair.pack()
+
+
+    manual_janela.bind("<Escape>", lambda e: botao_sair.invoke())
