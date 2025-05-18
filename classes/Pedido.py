@@ -72,7 +72,7 @@ class Pedido:
         self.nome_clientes = [f"{id} - {nome}" for id, nome in clientes]
 
         linha1 = tk.Frame(self.cadastrarPedido)
-        linha1.pack(pady=2)  # removido anchor="w"
+        linha1.pack(pady=2)  
         tk.Label(linha1, text="Nome:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
         self.combo_cliente = ttk.Combobox(linha1, values=self.nome_clientes)
         self.combo_cliente.pack(side="left")
@@ -144,9 +144,9 @@ class Pedido:
         tamanhos = [("P", "13"), ("M", "15"), ("G", "18")]
         for txt, val in tamanhos:
             tk.Radiobutton(frame_tamanho, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).pack(side="left", padx=5)
-        self.cadastrarPedido.bind("p", lambda e: self.selecionar_tamanho("13"))
-        self.cadastrarPedido.bind("m", lambda e: self.selecionar_tamanho("15"))
-        self.cadastrarPedido.bind("g", lambda e: self.selecionar_tamanho("18"))
+        self.cadastrarPedido.bind("<F1>", lambda e: self.selecionar_tamanho("13"))
+        self.cadastrarPedido.bind("<F2>", lambda e: self.selecionar_tamanho("15"))
+        self.cadastrarPedido.bind("<F3>", lambda e: self.selecionar_tamanho("18"))
 
         tk.Label(self.cadastrarPedido, text="Pagamento:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack()
 
@@ -159,11 +159,11 @@ class Pedido:
         formas = ["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
         for forma in formas:
             tk.Radiobutton(frame_pagamento, text=forma, variable=self.pagamento, value=forma).pack(side="left", padx=2)
-        self.cadastrarPedido.bind("1", lambda e: self.selecionar_pagamento("Credito"))
-        self.cadastrarPedido.bind("2", lambda e: self.selecionar_pagamento("Debito"))
-        self.cadastrarPedido.bind("3", lambda e: self.selecionar_pagamento("Dinheiro"))
-        self.cadastrarPedido.bind("4", lambda e: self.selecionar_pagamento("Pix"))
-        self.cadastrarPedido.bind("5", lambda e: self.selecionar_pagamento("Mumbuca"))
+        self.cadastrarPedido.bind("<F4>", lambda e: self.selecionar_pagamento("Credito"))
+        self.cadastrarPedido.bind("<F5>", lambda e: self.selecionar_pagamento("Debito"))
+        self.cadastrarPedido.bind("<F6>", lambda e: self.selecionar_pagamento("Dinheiro"))
+        self.cadastrarPedido.bind("<F7>", lambda e: self.selecionar_pagamento("Pix"))
+        self.cadastrarPedido.bind("<F8>", lambda e: self.selecionar_pagamento("Mumbuca"))
 
         linha12 = tk.Frame(self.cadastrarPedido)
         linha12.pack(pady=2)

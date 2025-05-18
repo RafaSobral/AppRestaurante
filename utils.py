@@ -260,15 +260,18 @@ DELETE      → Apagar Pedido Selecionado
 = (Igual)   → Abrir o menu de ajuda""")
 
     adicionar_secao("[Cadastro de Pedido]", """\
-Número 1    → Selecionar Crédito
-Número 2    → Selecionar Débito
-Número 3    → Selecionar Dinheiro
-Número 4    → Selecionar Pix
-Número 5    → Selecionar Mumbuca
+
+F1    → Selecionar marmita Pequena
+F2    → Selecionar marmita Média
+F3    → Selecionar marmita Grande               
                     
-Letra P     → Selecionar marmita Pequena
-Letra M     → Selecionar marmita Média
-Letra G     → Selecionar marmita Grande
+F4    → Selecionar Crédito
+F5    → Selecionar Débito
+F6    → Selecionar Dinheiro
+F7    → Selecionar Pix
+F8    → Selecionar Mumbuca
+                    
+
                     
 Navegue pela tela de cadastro de pedido
 com a tecla TAB, ao selecionar uma lista
