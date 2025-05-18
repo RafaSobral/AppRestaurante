@@ -16,7 +16,7 @@ cursor = conn.cursor()
 
 janela = tk.Tk()
 janela.title("Bom Apetite - Clique no botão de ajuda para visualizar as teclas de atalho")
-janela.geometry("1360x500")
+janela.geometry("1350x500")
 janela.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
 app_Cliente = Cliente() 

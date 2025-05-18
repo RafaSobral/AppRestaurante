@@ -18,13 +18,12 @@ class Caixa:
     def abrir_fecharCaixa(self):
         self.fecharCaixa = tk.Toplevel()
         self.fecharCaixa.focus_force()
-        self.fecharCaixa.geometry("400x600")
+        self.fecharCaixa.geometry("400x700")
         self.fecharCaixa.title("Fechar o Caixa")
         self.fecharCaixa.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(self.fecharCaixa, text="Para gerar o relatorio mensal, Selecione o mes e coloque o dia como 00.").pack(pady=6)
-        tk.Label(self.fecharCaixa, text="Selecionar Data:").pack(pady=5)
-
+        tk.Label(self.fecharCaixa, text="Para gerar o relatorio mensal, Selecione o mes e coloque o dia como 00.", bg="green", fg="white", relief="sunken", borderwidth=3, padx=10, pady=5).pack(pady=6)
+        
         date_entry = DateEntry(self.fecharCaixa, width=12, background='darkblue',
                             foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
         date_entry.pack(pady=10)
@@ -82,27 +81,27 @@ class Caixa:
 
             self.fecharCaixa.title(titulo)
 
-            tk.Label(self.frame_conteudo, text=f"{label_total} R$ {total_geral:.2f}", font=("Arial", 12, "bold")).pack(pady=5)
-            tk.Label(self.frame_conteudo, text="Totais por Forma de Pagamento:", font=("Arial", 10, "underline")).pack()
+            tk.Label(self.frame_conteudo, text=f"{label_total} R$ {total_geral:.2f}", font=("Arial", 12, "bold"), bg="green", fg="white", relief="sunken", borderwidth=3, padx=10, pady=5).pack(pady=5)
+            tk.Label(self.frame_conteudo, text="Totais por Forma de Pagamento:", font=("Arial", 10, "bold"), bg="green", fg="white", relief="sunken", borderwidth=3, padx=23).pack()
 
             for metodo, total in formas_pagamento.items():
-                tk.Label(self.frame_conteudo, text=f"{metodo}: R$ {total:.2f}").pack(anchor='w', padx=10)
+                tk.Label(self.frame_conteudo, text=f"{metodo}: R$ {total:.2f}", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=80).pack()
 
             mapa_tamanhos = {'13': 'Pequena', '15': 'Média', '18': 'Grande'}
-            tk.Label(self.frame_conteudo, text="\nTotal de Marmitas por Tamanho:", font=("Arial", 10, "underline")).pack()
+            tk.Label(self.frame_conteudo, text="\nTotal de Marmitas por Tamanho:", font=("Arial", 10, "bold"), bg="green", fg="white", relief="sunken", borderwidth=3, padx=23).pack()
 
             for tamanho, quantidade in tamanhos_marmita.items():
                 descricao = mapa_tamanhos.get(str(tamanho), str(tamanho))
-                tk.Label(self.frame_conteudo, text=f"{descricao}: {quantidade}x").pack(anchor='w', padx=10)
+                tk.Label(self.frame_conteudo, text=f"{descricao}: {quantidade}x", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=94).pack()
 
             if bebidas_vendidas:
-                tk.Label(self.frame_conteudo, text="\nBebidas Vendidas:", font=("Arial", 10, "underline")).pack()
+                tk.Label(self.frame_conteudo, text="\nBebidas Vendidas:", font=("Arial", 10, "bold"), bg="green", fg="white", relief="sunken", borderwidth=3, padx=66).pack()
                 for bebida, qtd in bebidas_vendidas.items():
-                    tk.Label(self.frame_conteudo, text=f"{bebida}: {qtd}x").pack(anchor='w', padx=10)
+                    tk.Label(self.frame_conteudo, text=f"{bebida}: {qtd}x", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=69).pack()
 
 
-            tk.Label(self.frame_conteudo, text=f"\nTotal de Troco: R$ {total_troco:.2f}").pack(anchor='w', padx=10)
-            tk.Label(self.frame_conteudo, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}").pack(anchor='w', padx=10)
+            tk.Label(self.frame_conteudo, text=f"\nTotal de Troco: R$ {total_troco:.2f}", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack()
+            tk.Label(self.frame_conteudo, text=f"Total de Taxa de Entrega: R$ {total_taxa:.2f}", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack()
 
             botao_imprimir = tk.Button(self.frame_conteudo, **botao_azul, text="Imprimir Fechamento", command=lambda: self.imprimir_fechamento_caixa(
                 total_geral, formas_pagamento, total_troco, total_taxa, tamanhos_marmita, titulo,  bebidas_vendidas))
@@ -111,7 +110,7 @@ class Caixa:
                 botao_imprimir.invoke()
             self.fecharCaixa.bind("-", acionar_imprimir)
 
-            
+
         botao_confirmar = tk.Button(self.fecharCaixa, **botao_verde, text="Confirmar Data", command=obter_data)
         botao_confirmar.pack(pady=5)
         def acionar_confirmar(event=None):

@@ -1,5 +1,3 @@
-1 - tirar botoes numeros da janela de cadastrar pedidos
-
 2 - Funcao para imprimir uma comanda para o motoboy 
 
 3 - Criar grafico
