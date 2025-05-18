@@ -56,41 +56,46 @@ class Cliente:
     def abrir_cadastrarCliente(self):
         self.cadastrarCliente = tk.Toplevel()
         self.cadastrarCliente.focus_force()
+        self.cadastrarCliente.geometry("260x270")
         self.cadastrarCliente.title('Cadastrar Cliente')
         self.cadastrarCliente.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        label_nome = tk.Label(self.cadastrarCliente, text="Nome:")
-        label_nome.grid(row = 0, column = 0)
+        label_nome = tk.Label(self.cadastrarCliente, text="Nome:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=41)
+        label_nome.pack(pady=(10, 0))
         self.nome = tk.Entry(self.cadastrarCliente)
-        self.nome.grid(row = 0, column = 1)
+        self.nome.pack(pady=(0, 10))
         self.nome.focus_set()
 
-        label_endereco = tk.Label(self.cadastrarCliente, text="Endereco:")
-        label_endereco.grid(row = 1, column = 0)
+        label_endereco = tk.Label(self.cadastrarCliente, text="Endereco:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=33)
+        label_endereco.pack(pady=(0, 0))
         self.endereco = tk.Entry(self.cadastrarCliente)
-        self.endereco.grid(row = 1, column = 1)
+        self.endereco.pack(pady=(0, 10))
 
-        label_telefone = tk.Label(self.cadastrarCliente, text="Telefone:")
-        label_telefone.grid(row= 2, column= 0)
+        label_telefone = tk.Label(self.cadastrarCliente, text="Telefone:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=35)
+        label_telefone.pack(pady=(0, 0))
         self.telefone = tk.Entry(self.cadastrarCliente)
-        self.telefone.grid(row = 2, column = 1)
+        self.telefone.pack(pady=(0, 10))
 
-        label_referencia = tk.Label(self.cadastrarCliente, text="Referencia:")
-        label_referencia.grid(row=3 , column= 0)
+        label_referencia = tk.Label(self.cadastrarCliente, text="Referencia:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=30)
+        label_referencia.pack(pady=(0, 0))
         self.referencia = tk.Entry(self.cadastrarCliente)
-        self.referencia.grid(row=3, column=1)
+        self.referencia.pack(pady=(0, 10))
 
-        botao_salvar = tk.Button(self.cadastrarCliente, **botao_verde, text="Salvar", command=self.salvar_cliente)
-        botao_salvar.grid(row=6, column=0)
+        botao_frame = tk.Frame(self.cadastrarCliente)
+        botao_frame.pack(pady=10)
+
+        botao_salvar = tk.Button(botao_frame, **botao_verde, text="Salvar", command=self.salvar_cliente)
+        botao_salvar.pack(side="left", padx=5)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarCliente.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarCliente, **botao_vermelho, text="Fechar", command=self.cadastrarCliente.destroy)
-        botao_voltar.grid(row = 7, column = 0)
+        botao_voltar = tk.Button(botao_frame, **botao_vermelho, text="Fechar", command=self.cadastrarCliente.destroy)
+        botao_voltar.pack(side="left", padx=5)
         def acionar_voltar(_):
             botao_voltar.invoke()
         self.cadastrarCliente.bind("<Escape>", acionar_voltar)
+
 
     def abrir_gerenciarClientes(self):
         self.gerenciarClientes = tk.Toplevel()
@@ -140,25 +145,26 @@ class Cliente:
 
         janela_editar = tk.Toplevel()
         janela_editar.focus_force()
+        janela_editar.geometry("250x210")
         janela_editar.title("Editar Cliente")
         janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(janela_editar, text="Nome").pack()
+        tk.Label(janela_editar, text="Nome", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=42).pack()
         nome_entry = tk.Entry(janela_editar)
         nome_entry.insert(0, nome_antigo)
         nome_entry.pack()
 
-        tk.Label(janela_editar, text="Endereco").pack()
+        tk.Label(janela_editar, text="Endereco", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=34).pack()
         endereco_entry = tk.Entry(janela_editar)
         endereco_entry.insert(0, endereco_antigo)
         endereco_entry.pack()
 
-        tk.Label(janela_editar, text="Telefone").pack()
+        tk.Label(janela_editar, text="Telefone", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=36).pack()
         telefone_entry = tk.Entry(janela_editar)
         telefone_entry.insert(0, telefone_antigo)
         telefone_entry.pack()
 
-        tk.Label(janela_editar, text="Referencia").pack()
+        tk.Label(janela_editar, text="Referencia", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=31).pack()
         referencia_entry = tk.Entry(janela_editar)
         referencia_entry.insert(0, referencia_antiga)
         referencia_entry.pack()

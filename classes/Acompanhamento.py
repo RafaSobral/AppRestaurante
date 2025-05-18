@@ -44,26 +44,29 @@ class Acompanhamento:
         self.cadastrarAcomp = tk.Toplevel()
         self.cadastrarAcomp.focus_force()
         self.cadastrarAcomp.title("Cadastrar Acompanhamentos:")
-        self.cadastrarAcomp.geometry("250x80")
+        self.cadastrarAcomp.geometry("330x110")
         self.cadastrarAcomp.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(self.cadastrarAcomp, text="Acompanhamento: " ).grid(row=0, column=0)
+        label_acomp = tk.Label(self.cadastrarAcomp, text="Acompanhamento:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=7)
+        label_acomp.pack(pady=(10, 0))
         self.acomp = tk.Entry(self.cadastrarAcomp)
+        self.acomp.pack(pady=(0, 10))
         self.acomp.focus_set()
-        self.acomp.grid(row=0, column=1)
 
-        botao_Salvar = tk.Button(self.cadastrarAcomp, **botao_verde, text="Salvar", command=self.salvar_Acompanhamento)
-        botao_Salvar.grid(row=1, column=0)
+        botao_frame = tk.Frame(self.cadastrarAcomp)
+        botao_frame.pack(pady=10)
+
+        botao_Salvar = tk.Button(botao_frame, **botao_verde, text="Salvar", command=self.salvar_Acompanhamento)
+        botao_Salvar.pack(side="left", padx=5)
         def acionar_salvar(_):
             botao_Salvar.invoke()
         self.cadastrarAcomp.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarAcomp, **botao_vermelho, text="Fechar", command=self.cadastrarAcomp.destroy)
-        botao_voltar.grid(row = 2, column = 0)
+        botao_voltar = tk.Button(botao_frame, **botao_vermelho, text="Fechar", command=self.cadastrarAcomp.destroy)
+        botao_voltar.pack(side="left", padx=5)
         def acionar_voltar(_):
             botao_voltar.invoke()
         self.cadastrarAcomp.bind("<Escape>", acionar_voltar)
-        
 
 
     def abrir_gerenciarAcompanhamentos(self):
@@ -110,10 +113,11 @@ class Acompanhamento:
 
         janela_editar = tk.Toplevel()
         janela_editar.focus_force()
+        janela_editar.geometry("230x90")
         janela_editar.title('Editar prato')
         janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(janela_editar, text="Nome").pack()
+        tk.Label(janela_editar, text="Nome", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=42).pack()
         nome_entry = tk.Entry(janela_editar)
         nome_entry.insert(0, nome_antigo)
         nome_entry.pack()

@@ -31,30 +31,33 @@ class Bebidas:
         self.cadastrarBebidas = tk.Toplevel()
         self.cadastrarBebidas.title('Cadastrar Bebidas')
         self.cadastrarBebidas.focus_force()
-        self.cadastrarBebidas.geometry('190x100')
+        self.cadastrarBebidas.geometry('265x130')
         self.cadastrarBebidas.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        label_nome = tk.Label(self.cadastrarBebidas, text="Nome:")
-        label_nome.grid(row=0,column=0)
+        label_nome = tk.Label(self.cadastrarBebidas, text="Nome:",  bg="blue", fg="white", relief="sunken", borderwidth=3, padx=41)
+        label_nome.pack()
 
         self.nome = tk.Entry(self.cadastrarBebidas)
         self.nome.focus_set()
-        self.nome.grid(row=0,column=1)
+        self.nome.pack()
 
-        label_preco = tk.Label(self.cadastrarBebidas, text="Preco:")
-        label_preco.grid(row=1,column=0)
+        label_preco = tk.Label(self.cadastrarBebidas, text="Preco:",  bg="blue", fg="white", relief="sunken", borderwidth=3, padx=43)
+        label_preco.pack()
 
         self.preco = tk.Entry(self.cadastrarBebidas)
-        self.preco.grid(row=1, column=1)
+        self.preco.pack()
 
-        botao_salvar = tk.Button(self.cadastrarBebidas, **botao_verde, text="Salvar", command=self.salvar_bebida)
-        botao_salvar.grid(row=6, column=0)
+        botao_frame = tk.Frame(self.cadastrarBebidas)
+        botao_frame.pack()
+
+        botao_salvar = tk.Button(botao_frame, **botao_verde, text="Salvar", command=self.salvar_bebida)
+        botao_salvar.pack(side="left", padx=5)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarBebidas.bind("<Return>", acionar_salvar)
         
-        botao_fechar = tk.Button(self.cadastrarBebidas, **botao_vermelho, text="Fechar", command=self.cadastrarBebidas.destroy)
-        botao_fechar.grid(row=7, column=0)
+        botao_fechar = tk.Button(botao_frame, **botao_vermelho, text="Fechar", command=self.cadastrarBebidas.destroy)
+        botao_fechar.pack(side="left", padx=5)
         def acionar_fechar(_):
             botao_fechar.invoke()
         self.cadastrarBebidas.bind("<Escape>", acionar_fechar)
@@ -124,15 +127,16 @@ class Bebidas:
         bebida_id, nome_antigo, preco_antigo = self.tree.item(selected[0], "values")
         janela_editar = tk.Toplevel()
         janela_editar.focus_force()
+        janela_editar.geometry("245x130")
         janela_editar.title("Editar Bebidas")
         janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(janela_editar, text="Nome:").pack()
+        tk.Label(janela_editar, text="Nome:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=41).pack()
         nome_entry = tk.Entry(janela_editar)
         nome_entry.insert(0, nome_antigo)
         nome_entry.pack()
 
-        tk.Label(janela_editar, text="Preco").pack()
+        tk.Label(janela_editar, text="Preco", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=44).pack()
         preco_entry = tk.Entry(janela_editar)
         preco_entry.insert(0, preco_antigo)
         preco_entry.pack()

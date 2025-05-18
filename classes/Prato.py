@@ -47,31 +47,35 @@ class Prato:
         self.cadastrarPratos = tk.Toplevel()
         self.cadastrarPratos.title('Cadastrar Pratos')
         self.cadastrarPratos.focus_force()
-        self.cadastrarPratos.geometry('190x100')
+        self.cadastrarPratos.geometry('260x160')
         self.cadastrarPratos.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        label_nome = tk.Label(self.cadastrarPratos, text="Nome:")
-        label_nome.grid(row=0,column=0)
+        label_nome = tk.Label(self.cadastrarPratos, text="Nome:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=41)
+        label_nome.pack(pady=(10, 0))
         self.nome = tk.Entry(self.cadastrarPratos)
+        self.nome.pack(pady=(0, 10))
         self.nome.focus_set()
-        self.nome.grid(row=0,column=1)
-        
-        label_descricao = tk.Label(self.cadastrarPratos, text="Descricao:")
-        label_descricao.grid(row=1,column=0)
-        self.descricao = tk.Entry(self.cadastrarPratos)
-        self.descricao.grid(row=1,column=1)
 
-        botao_salvar = tk.Button(self.cadastrarPratos, **botao_verde, text="Salvar", command=self.salvar_prato)
-        botao_salvar.grid(row=6, column=0)
+        label_descricao = tk.Label(self.cadastrarPratos, text="Descricao:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=32)
+        label_descricao.pack(pady=(0, 0))
+        self.descricao = tk.Entry(self.cadastrarPratos)
+        self.descricao.pack(pady=(0, 10))
+
+        botao_frame = tk.Frame(self.cadastrarPratos)
+        botao_frame.pack(pady=10)
+
+        botao_salvar = tk.Button(botao_frame, **botao_verde, text="Salvar", command=self.salvar_prato)
+        botao_salvar.pack(side="left", padx=5)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarPratos.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPratos, **botao_vermelho, text="Fechar", command=self.cadastrarPratos.destroy)
-        botao_voltar.grid(row=7, column=0)
+        botao_voltar = tk.Button(botao_frame, **botao_vermelho, text="Fechar", command=self.cadastrarPratos.destroy)
+        botao_voltar.pack(side="left", padx=5)
         def acionar_voltar(_):
             botao_voltar.invoke()
         self.cadastrarPratos.bind("<Escape>", acionar_voltar)
+
 
     def abrir_gerenciarPratos(self):
         self.gerenciarPratos = tk.Toplevel()
@@ -117,15 +121,16 @@ class Prato:
 
         janela_editar = tk.Toplevel()
         janela_editar.focus_force()
+        janela_editar.geometry("230x130")
         janela_editar.title("Editar prato")
         janela_editar.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
-        tk.Label(janela_editar, text="Nome").pack()
+        tk.Label(janela_editar, text="Nome", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=42).pack()
         nome_entry = tk.Entry(janela_editar)
         nome_entry.insert(0, nome_antigo)
         nome_entry.pack()
 
-        tk.Label(janela_editar, text="Descricao").pack()
+        tk.Label(janela_editar, text="Descricao", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=33).pack()
         descricao_entry = tk.Entry(janela_editar)
         descricao_entry.insert(0, descricao_antiga)
         descricao_entry.pack()

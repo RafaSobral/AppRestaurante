@@ -63,81 +63,99 @@ class Pedido:
         self.tree = tree
         self.cadastrarPedido = tk.Toplevel()
         self.cadastrarPedido.focus_force()
-        self.cadastrarPedido.title('Cadastrar Pedido - Use as teclas para selecionar o tamanho')
-        self.cadastrarPedido.geometry('560x330')
+        self.cadastrarPedido.title('Cadastrar Pedido')
+        self.cadastrarPedido.geometry('350x480')
         self.cadastrarPedido.iconphoto(False, tk.PhotoImage(file='logo.png'))
 
         self.cursor.execute("SELECT id, nome FROM clientes")
         clientes = self.cursor.fetchall()
         self.nome_clientes = [f"{id} - {nome}" for id, nome in clientes]
 
-        tk.Label(self.cadastrarPedido, text="Nome:").grid(row=0, column=0)
-        self.combo_cliente = ttk.Combobox(self.cadastrarPedido, values=self.nome_clientes)
-        self.combo_cliente.grid(row=0, column=1)
+        linha1 = tk.Frame(self.cadastrarPedido)
+        linha1.pack(pady=2)  # removido anchor="w"
+        tk.Label(linha1, text="Nome:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.combo_cliente = ttk.Combobox(linha1, values=self.nome_clientes)
+        self.combo_cliente.pack(side="left")
         self.combo_cliente.bind("<<ComboboxSelected>>", self.preencher_dados_cliente)
 
-        self.endereco = tk.Entry(self.cadastrarPedido)
-        self.endereco.grid(row=1, column=1)
-        tk.Label(self.cadastrarPedido, text="Endereco:").grid(row=1,column=0)
+        linha2 = tk.Frame(self.cadastrarPedido)
+        linha2.pack(pady=2)
+        tk.Label(linha2, text="Endereco:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.endereco = tk.Entry(linha2)
+        self.endereco.pack(side="left")
 
-        self.telefone = tk.Entry(self.cadastrarPedido)
-        self.telefone.grid(row=2, column= 1)
-        tk.Label(self.cadastrarPedido, text="Telefone:").grid(row=2,column=0)
+        linha3 = tk.Frame(self.cadastrarPedido)
+        linha3.pack(pady=2)
+        tk.Label(linha3, text="Telefone:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.telefone = tk.Entry(linha3)
+        self.telefone.pack(side="left")
 
-        self.referencia = tk.Entry(self.cadastrarPedido)
-        self.referencia.grid(row=3,column=1)
-        tk.Label(self.cadastrarPedido, text="Referencia:").grid(row=3, column=0)
+        linha4 = tk.Frame(self.cadastrarPedido)
+        linha4.pack(pady=2)
+        tk.Label(linha4, text="Referencia:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.referencia = tk.Entry(linha4)
+        self.referencia.pack(side="left")
 
         self.cursor.execute("SELECT nome FROM pratos")
         pratos = [p[0] for p in self.cursor.fetchall()]
-        tk.Label(self.cadastrarPedido, text="Prato:").grid(row=4,column=0)
-        self.combo_prato = ttk.Combobox(self.cadastrarPedido, values=pratos)
-        self.combo_prato.grid(row=4,column=1)
+        linha5 = tk.Frame(self.cadastrarPedido)
+        linha5.pack(pady=2)
+        tk.Label(linha5, text="Prato:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.combo_prato = ttk.Combobox(linha5, values=pratos)
+        self.combo_prato.pack(side="left")
 
         self.cursor.execute("SELECT nome FROM acompanhamentos")
-        acompanhamentos1 = [a[0] for a in self.cursor.fetchall()]
-        tk.Label(self.cadastrarPedido, text="Acompanhamento 1:").grid(row=5,column=0)
-        self.acomp1 = ttk.Combobox(self.cadastrarPedido, values=acompanhamentos1)
-        self.acomp1.grid(row=5, column=1)
+        acompanhamentos = [a[0] for a in self.cursor.fetchall()]
+        linha6 = tk.Frame(self.cadastrarPedido)
+        linha6.pack(pady=2)
+        tk.Label(linha6, text="Acompanhamento 1:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.acomp1 = ttk.Combobox(linha6, values=acompanhamentos)
+        self.acomp1.pack(side="left")
 
-        self.cursor.execute("SELECT nome FROM acompanhamentos")
-        acompanhamentos2 = [a[0] for a in self.cursor.fetchall()]
-        tk.Label(self.cadastrarPedido, text="Acompanhamentos 2:").grid(row=6,column=0)
-        self.acomp2 = ttk.Combobox(self.cadastrarPedido, values=acompanhamentos2)
-        self.acomp2.grid(row=6, column=1)
+        linha7 = tk.Frame(self.cadastrarPedido)
+        linha7.pack(pady=2)
+        tk.Label(linha7, text="Acompanhamentos 2:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.acomp2 = ttk.Combobox(linha7, values=acompanhamentos)
+        self.acomp2.pack(side="left")
 
-        tk.Label(self.cadastrarPedido, text="Observacao:").grid(row=7, column=0)
-        self.observacao = tk.Entry(self.cadastrarPedido)
-        self.observacao.grid(row=7,column=1)
+        linha8 = tk.Frame(self.cadastrarPedido)
+        linha8.pack(pady=2)
+        tk.Label(linha8, text="Observacao:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.observacao = tk.Entry(linha8)
+        self.observacao.pack(side="left")
 
-        tk.Label(self.cadastrarPedido, text="Tamanho:").grid(row=8, column=0)
+        self.cursor.execute("SELECT nome FROM bebidas")
+        bebida = [a[0] for a in self.cursor.fetchall()]
+        linha10 = tk.Frame(self.cadastrarPedido)
+        linha10.pack(pady=2)
+        tk.Label(linha10, text="Bebida:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.bebida = ttk.Combobox(linha10, values=bebida)
+        self.bebida.pack(side="left")
+        self.bebida.bind("<<ComboboxSelected>>", lambda event: self.calcular_valor())
+
+        tk.Label(self.cadastrarPedido, text="Tamanho:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack()
+
+        linha9 = tk.Frame(self.cadastrarPedido)
+        linha9.pack(pady=2)
         self.tamanho = tk.StringVar()
         self.tamanho.set(None)
-
-        frame_tamanho = tk.Frame(self.cadastrarPedido)
-        frame_tamanho.grid(row=8, column=1, columnspan=3, sticky="w")  
-
+        frame_tamanho = tk.Frame(linha9)
+        frame_tamanho.pack(side="left")
         tamanhos = [("P", "13"), ("M", "15"), ("G", "18")]
         for txt, val in tamanhos:
-            tk.Radiobutton(frame_tamanho, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).pack(side="left", padx=12)       
+            tk.Radiobutton(frame_tamanho, text=txt, variable=self.tamanho, value=val, command=self.calcular_valor).pack(side="left", padx=5)
         self.cadastrarPedido.bind("p", lambda e: self.selecionar_tamanho("13"))
         self.cadastrarPedido.bind("m", lambda e: self.selecionar_tamanho("15"))
         self.cadastrarPedido.bind("g", lambda e: self.selecionar_tamanho("18"))
 
-        self.cursor.execute("SELECT nome FROM bebidas")
-        bebida = [a[0] for a in self.cursor.fetchall()]
-        tk.Label(self.cadastrarPedido, text="Bebida:").grid(row=9,column=0)
-        self.bebida = ttk.Combobox(self.cadastrarPedido, values=bebida)
-        self.bebida.grid(row=9, column=1)
-        self.bebida.bind("<<ComboboxSelected>>", lambda event: self.calcular_valor())
-        
-        tk.Label(self.cadastrarPedido, text="Forma de Pagamento:").grid(row=10, column=0, sticky="w")
+        tk.Label(self.cadastrarPedido, text="Pagamento:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack()
+
+        linha11 = tk.Frame(self.cadastrarPedido)
+        linha11.pack(pady=2)
         self.pagamento = tk.StringVar()
         self.pagamento.set(None)
-
-        frame_pagamento = tk.Frame(self.cadastrarPedido)
-        frame_pagamento.grid(row=10, column=1, columnspan=5, sticky="w")  
-
+        frame_pagamento = tk.Frame(linha11)
+        frame_pagamento.pack(side="left")
         formas = ["Credito", "Debito", "Dinheiro", "Pix", "Mumbuca"]
         for forma in formas:
             tk.Radiobutton(frame_pagamento, text=forma, variable=self.pagamento, value=forma).pack(side="left", padx=2)
@@ -146,31 +164,40 @@ class Pedido:
         self.cadastrarPedido.bind("3", lambda e: self.selecionar_pagamento("Dinheiro"))
         self.cadastrarPedido.bind("4", lambda e: self.selecionar_pagamento("Pix"))
         self.cadastrarPedido.bind("5", lambda e: self.selecionar_pagamento("Mumbuca"))
-        
-        tk.Label(self.cadastrarPedido, text="Quantidade de troco:").grid(row=11, column=0)
-        self.troco = tk.Entry(self.cadastrarPedido)
-        self.troco.grid(row=11, column=1)
 
-        tk.Label(self.cadastrarPedido, text="Taxa de entrega:").grid(row=12, column=0)
-        self.taxa = tk.Entry(self.cadastrarPedido)
-        self.taxa.grid(row=12, column=1)
+        linha12 = tk.Frame(self.cadastrarPedido)
+        linha12.pack(pady=2)
+        tk.Label(linha12, text="Quantidade de troco:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.troco = tk.Entry(linha12)
+        self.troco.pack(side="left")
+
+        linha13 = tk.Frame(self.cadastrarPedido)
+        linha13.pack(pady=2)
+        tk.Label(linha13, text="Taxa de entrega:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
+        self.taxa = tk.Entry(linha13)
+        self.taxa.pack(side="left")
         self.taxa.bind("<KeyRelease>", lambda e: self.calcular_valor())
 
-        tk.Label(self.cadastrarPedido, text="Valor Total:").grid(row=13, column=0)
+        linha14 = tk.Frame(self.cadastrarPedido)
+        linha14.pack(pady=2)
+        tk.Label(linha14, text="Valor Total:", bg="blue", fg="white", relief="sunken", borderwidth=3, padx=10).pack(side="left")
         self.total = tk.StringVar()
-        tk.Entry(self.cadastrarPedido, textvariable=self.total, state="readonly").grid(row=13, column=1)
+        tk.Entry(linha14, textvariable=self.total, state="readonly").pack(side="left")
 
-        botao_salvar = tk.Button(self.cadastrarPedido, **botao_verde, text="Salvar", command=self.salvar_Pedido)
-        botao_salvar.grid(row=14, column=0)
+        linha_botoes = tk.Frame(self.cadastrarPedido)
+        linha_botoes.pack(pady=10)
+        botao_salvar = tk.Button(linha_botoes, **botao_verde, text="Salvar", command=self.salvar_Pedido)
+        botao_salvar.pack(side="left", padx=5)
         def acionar_salvar(_):
             botao_salvar.invoke()
         self.cadastrarPedido.bind("<Return>", acionar_salvar)
 
-        botao_voltar = tk.Button(self.cadastrarPedido, **botao_vermelho, text="Fechar", command=self.cadastrarPedido.destroy)
-        botao_voltar.grid(row = 14, column = 1)
+        botao_voltar = tk.Button(linha_botoes, **botao_vermelho, text="Fechar", command=self.cadastrarPedido.destroy)
+        botao_voltar.pack(side="left", padx=5)
         def acionar_voltar(_):
             botao_voltar.invoke()
         self.cadastrarPedido.bind("<Escape>", acionar_voltar)
+
 
     def selecionar_tamanho(self, valor):
         self.tamanho.set(valor)  
